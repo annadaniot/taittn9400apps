@@ -11,7 +11,15 @@ from features.steps.common import (
     login_success,
     pressing_shiftey_andhold,
 )
-from features.steps.fm_common import get_file_names, load_json_data, navigating_pages, verify_data_exist
+from features.steps.fm_common import (
+    fill_field,
+    get_file_names,
+    load_json_data,
+    navigating_pages,
+    select_dropdown,
+    toggle_checkbox,
+    verify_data_exist
+)
 
 
 @when("I fill in the form with a {test_case} Scenario")
@@ -22,38 +30,16 @@ def edit_create_rfss_map(context, test_case):
     """
     form_data = load_json_data(context, test_case)
 
-    logger.info(f"Data in the json file: {form_data}")
+    fill_field(context, "#wacnIdDec", form_data["WACN ID"])
+    fill_field(context, "#systemIdDec", form_data["System ID"])
+    fill_field(context, "#rfssIdDec", form_data["RFSS ID"])
+    fill_field(context, "#alias", form_data["Alias"])
 
-    wacn_id = context.page.locator("#wacnIdDec")
-    wacn_id.fill(form_data["WACN ID"])
+    select_dropdown(context, "#agencyName div svg", form_data["Agency"])
 
-    sys_id = context.page.locator("#systemIdDec")
-    sys_id.fill(form_data["System ID"])
-
-    rfss_id = context.page.locator("#rfssIdDec")
-    rfss_id.fill(form_data["RFSS ID"])
-
-    alias = context.page.locator("#alias")
-    alias.fill(form_data["Alias"])
-
-    agency_dropdown = context.page.locator("#agencyName > div > svg")
-    agency_dropdown.click()
-    agency_json = form_data["Agency"]
-    context.page.locator(f'li[aria-label="{agency_json}"]').click()
-
-    if "Subscriber" in test_case:
-        min_id = context.page.locator("#unitIdMinDec")
-        max_id = context.page.locator("#unitIdMaxDec")
-
-    else:
-        min_id = context.page.locator("#groupIdMinDec")
-        max_id = context.page.locator("#groupIdMaxDec")
-
-        if form_data["Supergroup"] == "Yes":
-            context.page.locator('#supergroup input').check()
-
+    min_id = context.page.locator("#unitIdMinDec" if "Subscriber" in test_case else "#groupIdMinDec")
+    max_id = context.page.locator("#unitIdMaxDec" if "Subscriber" in test_case else "#groupIdMaxDec")
     min_id.fill(form_data["Minimum"])
-
     max_id.fill(form_data["Maximum"])
 
 
@@ -69,71 +55,30 @@ def edit_create_groups(context, test_case):
 
     # Create single Group only
     if "Import" not in test_case:
-        group_id = context.page.locator("#groupIdDec")
-        group_id.clear()
-        group_id.fill(form_data["Group ID"])
+        fill_field(context, "#groupIdDec", form_data["Group ID"])
 
     # Create several Groups
     else:
-        start_gid = context.page.locator("#startGroupIdDec")
-        start_gid.clear()
-        start_gid.fill(form_data["Start ID"])
+        fill_field(context, "#startGroupIdDec", form_data["Start ID"])
+        fill_field(context, "#endGroupIdDec", form_data["End ID"])
 
-        end_gid = context.page.locator("#endGroupIdDec")
-        end_gid.clear()
-        end_gid.fill(form_data["End ID"])
+    fill_field(context, "#alias", form_data["Alias"])
 
-    alias = context.page.get_by_label("Alias")
-    alias.clear()
-    alias.fill(form_data["Alias"])
     if "Edit Group" in test_case:
         logger.info(f"Alias: {form_data['Alias']}")
 
-    context.page.locator("#type div svg").click()
-    context.page.get_by_role("option", name=form_data["Type"])
+    select_dropdown(context, "#type div svg", form_data["Type"])
+    select_dropdown(context, "#membershipType", form_data["Membership"])
+    select_dropdown(context, "#priority", form_data["Priority"])
 
-    context.page.locator("#membershipType").click()
-    context.page.get_by_role("option", name=form_data["Membership"], exact=True).click()
+    fill_field(context, "#rfHangTime input", form_data["RF Hangtime"])
+    fill_field(context, "#emHangTime input", form_data["Emergency Hangtime"])
+    fill_field(context, "#confirmedTimeout input", form_data["Timeout"])
 
-    context.page.locator("#priority").click()
-    context.page.locator(f'li[aria-label="{form_data["Priority"]}"]').click()
-
-    rfhangtime = context.page.locator("#rfHangTime input")
-    rfhangtime.clear()
-    rfhangtime.fill(form_data["RF Hangtime"])
-
-    emerhangtime = context.page.locator("#emHangTime input")
-    emerhangtime.clear()
-    emerhangtime.fill(form_data["Emergency Hangtime"])
-
-    timeout = context.page.locator("#confirmedTimeout input")
-    timeout.clear()
-    timeout.fill(form_data["Timeout"])
-
-    non_emer = context.page.locator("#allowNonEmergencyCalls input")
-    emer = context.page.locator("#allowEmergencyCalls input")
-    fdma_aff = context.page.locator("#allowFDMAAffiliation input")
-    prior_talkgroup_scan = context.page.locator("#priorityTalkgroupScan input")
-
-    if non_emer.is_checked() and form_data["Allow Non-Emergency"] == "No":
-        non_emer.uncheck()
-    if form_data["Allow Non-Emergency"] == "Yes":
-        non_emer.check()
-
-    if emer.is_checked() and form_data["Allow Emergency"] == "No":
-        emer.uncheck()
-    if form_data["Allow Emergency"] == "Yes":
-        emer.check()
-
-    if fdma_aff.is_checked() and form_data["Allow FDMA Affiliation"] == "No":
-        fdma_aff.uncheck()
-    if form_data["Allow FDMA Affiliation"] == "Yes":
-        fdma_aff.check()
-
-    if prior_talkgroup_scan.is_checked() and form_data["Priority TG Scan"] == "No":
-        prior_talkgroup_scan.uncheck()
-    if form_data["Priority TG Scan"] == "Yes":
-        prior_talkgroup_scan.check()
+    toggle_checkbox(context.page.locator("#allowNonEmergencyCalls input"), form_data["Allow Non-Emergency"] == "Yes")
+    toggle_checkbox(context.page.locator("#allowEmergencyCalls input"), form_data["Allow Emergency"] == "Yes")
+    toggle_checkbox(context.page.locator("#allowFDMAAffiliation input"), form_data["Allow FDMA Affiliation"] == "Yes")
+    toggle_checkbox(context.page.locator("#priorityTalkgroupScan input"), form_data["Priority TG Scan"] == "Yes")
 
     context.test_case = test_case
 
@@ -146,73 +91,38 @@ def edit_create_subscriber(context, test_case):
     """
     form_data = load_json_data(context, test_case)
 
-    logger.info(f"Data in the json file: {form_data}")
-
     # Create single SU only
     if "Import" not in test_case:
-        unit_id = context.page.locator("#unitIdDec")
-        unit_id.fill("")  # Clear the field by filling it with an empty string
-        unit_id.fill(form_data["Unit ID"])
+        fill_field(context, "#unitIdDec", form_data["Unit ID"])
 
-        allow_data_calls = context.page.locator(
-            '//*[@id="app"]/div[1]/div/div/div[21]/div/div[2]/div/div[2]'
-        )
+        allow_data_calls = context.page.locator('#allowDataCalls input')
         allow_data_json = form_data["Allow Data Calls"]
         if allow_data_json == "Yes":
             allow_data_calls.click()
 
     # Create several SUs only
     else:
-        start_uid = context.page.locator("#startUnitIdDec")
-        start_uid.fill(form_data["Start ID"])
-
-        end_uid = context.page.locator("#endUnitIdDec")
-        end_uid.fill(form_data["End ID"])
-
-    alias = context.page.locator("#alias")
-    alias.fill(form_data["Alias"])
+        fill_field(context, "#startUnitIdDec", form_data["Start ID"])
+        fill_field(context, "#endUnitIdDec", form_data["End ID"])
+    fill_field(context, "#alias", form_data["Alias"])
 
     if "Create" in test_case:
-        type_dropdown = context.page.locator("#type div svg")
-        type_dropdown.click()
-        type_json = form_data["Type"]
-        context.page.locator(f'li[aria-label="{type_json}"]').click()
+        select_dropdown(context, "#type div svg", form_data["Type"])
 
-    unit_type_dropdown = context.page.locator("#unitType div svg")
-    unit_type_dropdown.click()
+    select_dropdown(context, "#unitType div svg", form_data["Unit Type"])
+    select_dropdown(context, "#priority div svg", form_data["Priority"])
+    select_dropdown(context, "#groupCallPerm div svg", form_data["Group Call Permission"])
+    sleep(1)
+
+    select_dropdown(context, "#unitCallPerm div", form_data["Unit Call Permission"])
+    sleep(1)
+
+    select_dropdown(context, "#pstnCallPerm div svg", form_data["PSTN Call Permission"])
+    fill_field(context, "#info", form_data["Information"])
+
     unit_type_json = form_data["Unit Type"]
-    context.page.locator(f'li[aria-label="{unit_type_json}"]').click()
-
-    priority_dropdown = context.page.locator("#priority div svg")
-    priority_dropdown.click()
-    priority_json = form_data["Priority"]
-    context.page.locator(f'li[aria-label="{priority_json}"]').click()
-
-    group_call_permission_dropdown = context.page.locator("#groupCallPerm div svg")
-    group_call_permission_dropdown.click()
-    group_call_permission_json = form_data["Group Call Permission"]
-    context.page.locator(f'li[aria-label="{group_call_permission_json}"]').click()
-    sleep(1)
-
-    unit_call_permission_dropdown = context.page.locator("#unitCallPerm div")
-    unit_call_permission_dropdown.click()
-    unit_call_permission_json = form_data["Unit Call Permission"]
-    context.page.locator(f'li[aria-label="{unit_call_permission_json}"]').click()
-    sleep(1)
-
-    pstn_call_permission_dropdown = context.page.locator("#pstnCallPerm div svg")
-    pstn_call_permission_dropdown.click()
-    pstn_call_permission_json = form_data["PSTN Call Permission"]
-    context.page.locator(f'li[aria-label="{pstn_call_permission_json}"]').click()
-
-    info = context.page.locator("#info")
-    info.fill(form_data["Information"])
-
     if unit_type_json == "Unit":
-        affiliate_anywhere = context.page.locator("#affiliateAnywhere input")
-        affiliate_anywhere_json = form_data["Affiliate Anywhere"]
-        if affiliate_anywhere_json == "Yes":
-            affiliate_anywhere.click()
+        toggle_checkbox(context.page.locator("#affiliateAnywhere input"), form_data["Affiliate Anywhere"] == "Yes")
 
 
 @then("the scenario {test_case} is successful")
@@ -273,7 +183,7 @@ def click_section(context, test_case):
         context.page.locator(
             "xpath=/html/body/div[1]/div/div/div[3]/div[3]/div[2]/div/div[2]/div[21]/div[1]/div/div[1]/a"
         ).click()
-    if "Subscriber Location Permissions" in test_case:
+    elif "Subscriber Location Permissions" in test_case:
         context.page.locator(
             "xpath=/html/body/div[1]/div/div/div[3]/div[3]/div[2]/div/div[2]/div[25]/div[1]/div/div[1]/a"
         ).click()
@@ -317,19 +227,14 @@ def delete_many(context, start_row, end_row, test_case):
         number = +1
 
 
-@when(
-    "I split the {test_case} into 2 maps with the first one having max Unit ID of {max}"
-)
+@when("I split the {test_case} into 2 maps with the first one having max Unit ID of {max}")
 def split_map(context, test_case, max):
     """
     To split the Home RFSS Map into 2 maps
     """
 
     context.test_case = test_case
-
     context.max_1stgroup = int(max)
-
-    logger.info(f"test_case in split: {test_case}")
 
     if "Group" in test_case:
         split_id = context.page.locator('input[placeholder="Group ID Split"]')
@@ -347,8 +252,7 @@ def verify_map_split(context):
     """
     To verify that split is successful
     """
-    logging.info(f"testcase in verify Split: {context.test_case}")
-
+    
     found_2nd_min = False
 
     found_2nd_min = verify_data_exist(context, context.test_case)
@@ -479,31 +383,20 @@ def create_edit_user(context, test_case):
         username = context.page.locator('#username')
         username.fill(form_data["Username"])
 
-    name = context.page.locator('#name')
-    name.fill(form_data["Name"])
-
-    password = context.page.locator('#password input')
-    password.fill(form_data["Password"])
+    fill_field(context, '#name', (form_data["Name"]))
+    fill_field(context, '#password input', (form_data["Password"]))
     context.page.locator("#password_panel").click()
-
-    confirm_password = context.page.locator('#confirm-password  input')
-    confirm_password.fill(form_data["Password"])
+    fill_field(context, '#confirm-password  input', (form_data["Confirm Password"]))
     context.page.locator("#confirm-password_panel").click()
+    fill_field(context, '#comment', (form_data["Comment"]))
 
-    comment = context.page.locator('#comment')
-    comment.fill(form_data["Comment"])
-
-    logger.info(form_data["Disabled"])
-    if form_data["Disabled"] == "Yes":
-        context.page.locator("#disabled").get_by_role("checkbox").check()
-
+    if form_data["Disabled"] == "Yes": 
+        toggle_checkbox(context.page.locator("#disabled input"), form_data["Disabled"] == "Yes")
     else:
         if 'Console' not in test_case:
-            if form_data["Fleet Administrator"] == "Yes":
-                context.page.locator("#admin").get_by_role("checkbox").check()
+            toggle_checkbox(context.page.locator("#admin input"), form_data["Fleet Administrator"] == "Yes")
         else:
-            context.page.locator("#pv_id_47 > span").click()
-            context.page.get_by_role("option", name=form_data["Default"], exact=True).click()
+            select_dropdown(context, '#pv_id_47 span', form_data["Default"])
 
 
 @when('I login using the new credential')
@@ -529,22 +422,14 @@ def newc_login_success(context):
 @when('I complete the form with a {test_case} scenario')
 def create_edit_supergroup(context, test_case):
 
-    form_data = load_json_data(context, 'Edit Supergroup')
+    form_data = load_json_data(context, test_case)
 
     if 'Create' in test_case:
-        form_data = load_json_data(context, 'Create Supergroup')
+        fill_field(context, '#groupIdDec', form_data["Group ID"])
 
-        group_id = context.page.locator('#groupIdDec')
-        group_id.fill(form_data["Group ID"])
-
-    alias = context.page.locator('#alias')
-    alias.fill(form_data["Alias"])
-
-    rfhangtime = context.page.locator('#rfHangTime input') 
-    rfhangtime.fill(form_data["RF Hangtime"])
-
-    context.page.locator("#priority").click()
-    context.page.locator(f'li[aria-label="{form_data["Priority"]}"]').click()
+    fill_field(context, '#alias', form_data["Alias"])
+    fill_field(context, '#rfHangTime input', form_data["RF Hangtime"])
+    select_dropdown(context, '#priority', form_data["Priority"])
 
 
 @when('I {test_case} to the Supergroup')
@@ -561,3 +446,4 @@ def add_members_supergroup(context, test_case):
 
     close_button = context.page.locator('div.p-dialog-header button')
     close_button.click()
+
