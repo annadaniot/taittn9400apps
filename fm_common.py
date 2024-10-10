@@ -58,10 +58,9 @@ def navigating_pages(context, submenu):
     }
 
     menu_num = menu_dict[submenu]
-    logger.info(f"menu_num: {menu_num}")
 
     url = link_url_dict[submenu]
-    logger.info(f"link: {url}")
+
 
     # 1. Expanding Menus
     # if Subscribers, then no need to click since submenus, Subscribers is displayed already
@@ -149,7 +148,6 @@ def find_search_key(context, test_case):
     logger.info(context.scenario.name)
 
     if "Split" in context.scenario.name:
-        logger.info(context.max_1stgroup)
         return str(context.max_1stgroup)
 
     elif "Delet" in context.scenario.name:
@@ -168,35 +166,27 @@ def find_search_key(context, test_case):
         form_data = load_json_data(context, test_case)
 
         if test_case == "Create Group":
-            logger.info(f"{form_data['Group ID']}")
             return form_data["Group ID"]
 
         elif test_case == "Edit Group":
-            logger.info(f"{form_data['Alias']}")
             return form_data["Alias"]
 
         elif "Groups Import" in test_case or "Subscribers Import" in test_case:
-            logger.info(f"{form_data['Start ID']}")
             return form_data["Start ID"]
 
         elif test_case == "Create Subscriber":
-            logger.info(f"{form_data['Unit ID']}")
             return form_data["Unit ID"]
 
         elif test_case == "Edit Subscriber":
-            logger.info(f"{form_data['Alias']}")
             return form_data["Alias"]
 
         elif "RFSS Map" in test_case:
-            logger.info(f"{form_data['Maximum']}")
             return form_data["Maximum"]
 
         elif 'User' in test_case:
-            logger.info(f'{form_data["Name"]}')
             return form_data["Name"]
         
         elif 'Supergroup' in test_case:
-            logger.info(f'{form_data["Alias"]}')
             return form_data["Alias"]
         else:
             logger.info(f'{test_case} not found.')
@@ -218,3 +208,13 @@ def get_file_names(context):
     return backup_files
 
 
+def fill_field(context, selector, value):
+    field = context.page.locator(selector)
+    field.clear()
+    field.fill(value)
+
+
+def select_dropdown(context, dropdown_selector, option_value):
+    dropdown = context.page.locator(dropdown_selector)
+    dropdown.click()
+    context.page.locator(f'li[aria-label="{option_value}"]').click()
