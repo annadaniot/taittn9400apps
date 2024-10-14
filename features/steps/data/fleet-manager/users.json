@@ -1,0 +1,43 @@
+{
+    "Create User": {
+        "Username": "taituser",
+        "Name": "Tait User",
+        "Password": "tait",
+        "Confirm Password": "tait",
+        "Comment": "New User",
+        "Disabled": "No",
+        "Fleet Administrator": "Yes"
+    },
+
+    "Edit User": {
+        "Username": "taituser",
+        "Name": "New User",
+        "Password": "tait",
+        "Confirm Password": "tait",
+        "Comment": "New User",
+        "Disabled": "No",
+        "Fleet Administrator": "Yes"
+    },
+
+    "Create Console User": {
+        "Username": "console",
+        "Name": "Console User",
+        "Password": "tait",
+        "Confirm Password": "tait",
+        "Comment": "New Console User",
+        "Disabled": "No",
+        "Default": "Console Operator"
+    }, 
+    
+    "Edit Console User": {
+        "Username": "console",
+        "Name": "Console User",
+        "Password": "tait",
+        "Confirm Password": "tait",
+        "Comment": "New Console User",
+        "Disabled": "Yes"
+    }
+
+
+    
+}

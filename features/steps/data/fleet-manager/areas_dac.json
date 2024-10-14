@@ -1,0 +1,58 @@
+{
+    "Create Service Area": {
+        "Area Name": "Area1",
+        "Agency": "Default",
+        "Description": "First Service Area"
+    }, 
+
+    "Edit Service Area": {
+        "Area Name": "Service Area1",
+        "Agency": "Default",
+        "Description": "First Service Area"
+    },
+    
+    "Create DAC Group Profile": {
+        "Name": "Unencrypted",
+        "DAC Group ID": "1",
+        "OTAR Transport Protocol": "UDP",
+        "OTAR Port Number": "64414",
+        "Encrypted": "No",
+        "Location Data Transport Protocol": "UDP",
+        "Location Data Port Number": "64420",
+        "OTAP Transport Protocol": "UDP",
+        "OTAP Port Number": "64422"
+    },
+    
+    "Edit DAC Group Profile": {
+        "Name": "Encrypted",
+        "DAC Group ID": "1",
+        "OTAR Transport Protocol": "UDP",
+        "OTAR Port Number": "64414",
+        "Encrypted": "Yes",
+        "Location Data Transport Protocol": "UDP",
+        "Location Data Port Number": "64420",
+        "OTAP Transport Protocol": "UDP",
+        "OTAP Port Number": "64422"
+    },
+    
+    "Create DAC Group Map": {
+        "WACN ID": "672664",
+        "System ID": "5",
+        "Minumum": "70001",
+        "Maximum": "70015",
+        "DAC Group Name": "Encrypted",
+        "IP Pool": "Test-Pool",
+        "Alias": "PD-Encrypted"
+    },
+
+    "Edit DAC Group Map": {
+        "WACN ID": "672664",
+        "System ID": "5",
+        "Minumum": "70001",
+        "Maximum": "70050",
+        "DAC Group Name": "Encrypted",
+        "IP Pool": "Test-Pool",
+        "Alias": "PD-Encrypted-Extended"
+    }
+    
+}

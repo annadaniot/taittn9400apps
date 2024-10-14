@@ -1,0 +1,6 @@
+System ID(HEX),WACN ID(HEX),Group ID(HEX),Group ID(DEC),Alias,Type,Membership Type,Announcement Group ID,RF Hang Time (sec),Emergency Hang Time (sec),Confirmed Timeout (sec),Priority,Allow Non Emergency Calls,Allow Emergency Calls,Allow FDMA Affiliation,Priority Talkgroup Scan,Prio TG Scan At All Sites
+005,A4398,1B5E,7006,Group-7006,Standard,Open,A43980051B5F,2,2,0,5,Yes,Yes,Yes,No,No
+005,A4398,1B5F,7007,Group-7007,Standard,Open,A43980051B5F,2,2,0,5,Yes,Yes,Yes,No,No
+005,A4398,1B60,7008,Group-7008,Standard,Open,A43980051B5F,2,2,0,5,Yes,Yes,Yes,No,No
+005,A4398,1B61,7009,Group-7009,Standard,Open,A43980051B5F,2,2,0,5,Yes,Yes,Yes,No,No
+005,A4398,1B62,7010,Group-7010,Standard,Open,A43980051B5F,2,2,0,5,Yes,Yes,Yes,No,No

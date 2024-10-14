@@ -1,0 +1,40 @@
+{
+
+    "Create Supergroup RFSS Map": {
+        "WACN ID": "672664",
+        "System ID": "5",
+        "RFSS ID": "7",
+        "Minimum": "7501",
+        "Maximum": "7550",
+        "Alias": "Supergroup RFSS Map",
+        "Agency": "Default",
+        "Supergroup": "Yes"
+    },
+
+    "Create Intra-ISSI RFSS Map - Supergroup": {
+        "WACN ID": "672664",
+        "System ID": "5",
+        "RFSS ID": "5",
+        "Minimum": "5001",
+        "Maximum": "5150",
+        "Alias": "Auckland Default",
+        "Agency": "Default",
+        "Supergroup": "No"
+    },
+
+    "Edit Supergroup": {
+        "Alias": "Supergroup",
+        "RF Hangtime": "2.0",
+        "Priority": "5"
+    },
+
+    "Create Supergroup": {
+        "Group ID": "7501",
+        "Alias": "Supergroup-Default",
+        "RF Hangtime": "5.0",
+        "Priority": "6"
+    } 
+}
+
+ 
+

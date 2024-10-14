@@ -1,0 +1,62 @@
+{
+    "Create Subscriber RFSS Map": {
+        "WACN ID": "672664",
+        "System ID": "5",
+        "RFSS ID": "7",
+        "Minimum": "71001",
+        "Maximum": "72000",
+        "Alias": "Batch1 SUs",
+        "Agency": "Default"
+    }, 
+    "Edit Subscribers RFSS Map": {
+        "WACN ID": "672664",
+        "System ID": "5",
+        "RFSS ID": "7",
+        "Minimum": "71001",
+        "Maximum": "71500",
+        "Alias": "Batch1 SUs",
+        "Agency": "Default"
+    },
+    "Create Subscriber": {
+        "Unit ID": "70001",
+        "Alias": "70001",
+        "Type": "Unit",
+        "Unit Type": "SU",
+        "Priority": "5",
+        "Group Call Permission": "All",
+        "Unit Call Permission": "All",
+        "PSTN Call Permission": "All",
+        "Allow Data Calls": "No",
+        "Information": "SU for CI tests",
+        "Affiliate Anywhere": "Yes"
+    },
+
+    "Edit Subscriber": {
+        "Unit ID": "70002",
+        "Alias": "70002",
+        "Unit Type": "TAG",
+        "Priority": "7",
+        "Group Call Permission": "All",
+        "Unit Call Permission": "All",
+        "PSTN Call Permission": "All",
+        "Allow Data Calls": "No",
+        "Information": "SU for CI tests"
+    }, 
+
+    "Create Subscribers Import": {
+        "Start ID": "70001",
+        "End ID": "70004",
+        "Alias": "Default-$unitid",
+        "Type": "Unit",
+        "Unit Type": "SU",
+        "Priority": "5",
+        "Group Call Permission": "All",
+        "Unit Call Permission": "All",
+        "PSTN Call Permission": "All",
+        "Allow Data Calls": "No",
+        "Information": "SU for CI tests",
+        "Affiliate Anywhere": "Yes"
+    }  
+}
+
+ 

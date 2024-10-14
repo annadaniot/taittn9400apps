@@ -1,0 +1,71 @@
+{
+
+    "Create Groups RFSS Map": {
+        "WACN ID": "672664",
+        "System ID": "5",
+        "RFSS ID": "7",
+        "Minimum": "7201",
+        "Maximum": "7400",
+        "Alias": "Second Group Map",
+        "Agency": "Default",
+        "Supergroup": "No"
+    },
+
+    "Edit Groups RFSS Map": {
+        "WACN ID": "672664",
+        "System ID": "5",
+        "RFSS ID": "7",
+        "Minimum": "7201",
+        "Maximum": "7250",
+        "Alias": "Second Group Map",
+        "Agency": "Default",
+        "Supergroup": "No"
+    },
+
+    "Create Group": {
+        "Group ID": "7001",
+        "Alias": "CI Tests Groups",
+        "Type": "System",
+        "Membership": "Closed",
+        "RF Hangtime": "5",
+        "Emergency Hangtime": "5",
+        "Timeout": "5",
+        "Priority":"6",
+        "Allow Non-Emergency": "Yes",
+        "Allow Emergency": "Yes",
+        "Allow FDMA Affiliation": "Yes",
+        "Priority TG Scan": "No"
+    },
+    "Edit Group": {
+        "Group ID": "7001",
+        "Alias": "Test Groups",
+        "Type": "Standard",
+        "Membership": "Open",
+        "RF Hangtime": "2",
+        "Emergency Hangtime": "2",
+        "Timeout": "2",
+        "Priority":"5",
+        "Allow Non-Emergency": "No",
+        "Allow Emergency": "No",
+        "Allow FDMA Affiliation": "No",
+        "Priority TG Scan": "No"
+    },
+    "Create Groups Import": {
+        "Start ID": "7002",
+        "End ID": "7005",
+        "Alias": "Default-$groupid",
+        "Type": "Standard",
+        "Membership": "Open with Restrictions",
+        "Announcement": "None",
+        "RF Hangtime": "5",
+        "Emergency Hangtime": "5",
+        "Timeout": "2",
+        "Priority":"6",
+        "Allow Non-Emergency":"Yes",
+        "Allow Emergency":"Yes",
+        "Allow FDMA Affiliation":"Yes",
+        "Priority TG Scan": "No"
+     }
+}
+
+ 

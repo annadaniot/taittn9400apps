@@ -1,0 +1,7 @@
+System ID(HEX),WACN ID(HEX),Unit ID(HEX),Unit ID(DEC),Alias,Type,Unit Type,Priority,Group Call Perm.,Unit Call Perm.,PSTN Call Perm.,Info,Allow affiliate anywhere,Allow Data Calls,IP Pool,Static IP Address,SDS can interrupt call
+005,A4398,011175,70005,SUID - 70005,Unit,SU,5,All,All,All,Second Set of SUs,Yes,No,,,No
+005,A4398,011176,70006,SUID - 70006,Unit,SU,5,All,All,All,Second Set of SUs,Yes,No,,,No
+005,A4398,011177,70007,SUID - 70007,Unit,SU,5,All,All,All,Second Set of SUs,Yes,No,,,No
+005,A4398,011178,70008,SUID - 70008,Unit,SU,5,All,All,All,Second Set of SUs,Yes,No,,,No
+005,A4398,011179,70009,SUID - 70009,Unit,SU,5,All,All,All,Second Set of SUs,Yes,No,,,No
+005,A4398,01117A,70010,SUID - 70010,Unit,SU,5,All,All,All,Second Set of SUs,Yes,No,,,No
