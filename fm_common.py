@@ -1,248 +1,510 @@
-import json
+import os
+import logging
 from time import sleep
-from behave import when
+from behave import when, then
 from features.logger import logger
-from features.steps.common import button_click
+from features.steps.common import (
+    button_click,
+    confirmation_dialog_box,
+    get_toast_message,
+    login,
+    login_success,
+    pressing_shiftey_andhold,
+)
+from features.steps.fm_common import (
+    fill_field,
+    get_file_names,
+    load_json_data,
+    navigating_pages,
+    select_dropdown,
+    toggle_checkbox,
+    verify_data_exist
+)
 
 
-@when("I clicked on FM {submenu} menu")
-def navigating_pages(context, submenu):
+@when("I fill in the form with a {test_case} Scenario")
+@when("I do {test_case}")
+def edit_create_rfss_map(context, test_case):
     """
-    To open a page in the Fleet Manager app
+    Creates or Edit Subscriber or Group Home RFSS Map
     """
+    form_data = load_json_data(context, test_case)
 
-    menu_dict = {
-        "Subscribers": 1,
-        "Subscriber RFSS Map": 1,
-        "Groups": 2,
-        "Groups RFSS Map": 2,
-        "Supergroups": 3,
-        "Locations": 4,
-        "Service Areas": 4,
-        "SN Contexts": 5,
-        "IP Address Pool": 5,
-        "DAC Group Profiles": 5,
-        "DAC Group Map": 5,
-        "Users": 6,
-        "Console Users": 6,
-        "Authentication": 6,
-        "Fleet Backups": 7,
-        "Users Backups": 7,
-        "Change Logs Backups": 7,
-        "Access Logs": 8,
-        "Change Logs": 8,
-        "Subscribers Import": 9,
-        "Groups Import": 9,
-    }
+    fill_field(context, "#wacnIdDec", form_data["WACN ID"])
+    fill_field(context, "#systemIdDec", form_data["System ID"])
+    fill_field(context, "#rfssIdDec", form_data["RFSS ID"])
+    fill_field(context, "#alias", form_data["Alias"])
 
-    link_url_dict = {
-        "Subscribers": "/p25fm/subscribers",
-        "Subscriber RFSS Map": "/p25fm/subscribers/rfss",
-        "Groups": "/p25fm/groups",
-        "Groups RFSS Map": "/p25fm/groups/rfss",
-        "Supergroups": "/p25fm/supergroups",
-        "Locations": "/p25fm/locations",
-        "Service Areas": "/p25fm/service_areas",
-        "SN Contexts": "/p25fm/service_areas",
-        "IP Address Pool": "/p25fm/packetdata/ip",
-        "DAC Group Profiles": "/p25fm/packetdata/dacgroups",
-        "DAC Group Map": "/p25fm/packetdata/dacgroups/maps",
-        "Users": "/p25fm/credentials/users",
-        "Console Users": "/p25fm/credentials/consoleusers",
-        "Authentication": "/p25fm/credentials/authentication",
-        "Fleet Backups": "/p25fm/backups",
-        "Users Backups": "/p25fm/backups/users",
-        "Change Logs Backups": "/p25fm/backups/changelogs",
-        "Access Logs": "/p25fm/logs/accesslogs",
-        "Change Logs": "/p25fm/logs/changelogs",
-        "Subscribers Import": "/p25fm/import/subscribers",
-        "Groups Import": "/p25fm/import/groups",
-    }
+    select_dropdown(context, "#agencyName div svg", form_data["Agency"])
 
-    menu_num = menu_dict[submenu]
-
-    url = link_url_dict[submenu]
+    min_id = context.page.locator("#unitIdMinDec" if "Subscriber" in test_case else "#groupIdMinDec")
+    max_id = context.page.locator("#unitIdMaxDec" if "Subscriber" in test_case else "#groupIdMaxDec")
+    min_id.fill(form_data["Minimum"])
+    max_id.fill(form_data["Maximum"])
 
 
-    # 1. Expanding Menus
-    # if Subscribers, then no need to click since submenus, Subscribers is displayed already
-    if menu_num != 1:
-        # 3.30:
-        # active_menu = context.page.locator(f'xpath=//*[@id="app"]/div[2]/div[2]/div[1]/div/div[{menu_num}]/div[2]/div/
-        # span[2]')
-        # 3.32:
-        active_menu = context.page.locator(
-            f'xpath=//*[@id="resizer"]/div[1]/div/div/div[{menu_num}]/div[2]/div/span[2]'
-        )
-        active_menu.click()
+@when("I complete the {test_case} form")
+@when("I will do {test_case}")
+def edit_create_groups(context, test_case):
+    """
+    Creates or Edit Groups
+    """
+    form_data = load_json_data(context, test_case)
+
+    logger.info(f"Data in the json file: {form_data}")
+
+    # Create single Group only
+    if "Import" not in test_case:
+        fill_field(context, "#groupIdDec", form_data["Group ID"])
+
+    # Create several Groups
+    else:
+        fill_field(context, "#startGroupIdDec", form_data["Start ID"])
+        fill_field(context, "#endGroupIdDec", form_data["End ID"])
+
+    fill_field(context, "#alias", form_data["Alias"])
+
+    if "Edit Group" in test_case:
+        logger.info(f"Alias: {form_data['Alias']}")
+
+    select_dropdown(context, "#type div svg", form_data["Type"])
+    select_dropdown(context, "#membershipType", form_data["Membership"])
+    select_dropdown(context, "#priority", form_data["Priority"])
+
+    fill_field(context, "#rfHangTime input", form_data["RF Hangtime"])
+    fill_field(context, "#emHangTime input", form_data["Emergency Hangtime"])
+    fill_field(context, "#confirmedTimeout input", form_data["Timeout"])
+
+    toggle_checkbox(context.page.locator("#allowNonEmergencyCalls input"), form_data["Allow Non-Emergency"] == "Yes")
+    toggle_checkbox(context.page.locator("#allowEmergencyCalls input"), form_data["Allow Emergency"] == "Yes")
+    toggle_checkbox(context.page.locator("#allowFDMAAffiliation input"), form_data["Allow FDMA Affiliation"] == "Yes")
+    toggle_checkbox(context.page.locator("#priorityTalkgroupScan input"), form_data["Priority TG Scan"] == "Yes")
+
+    context.test_case = test_case
+
+
+@when("I fill in the {test_case} form")
+@when("I'll do the scenario {test_case}")
+def edit_create_subscriber(context, test_case):
+    """
+    Creates or Edit Subscriber
+    """
+    form_data = load_json_data(context, test_case)
+
+    # Create single SU only
+    if "Import" not in test_case:
+        fill_field(context, "#unitIdDec", form_data["Unit ID"])
+
+        allow_data_calls = context.page.locator('#allowDataCalls input')
+        allow_data_json = form_data["Allow Data Calls"]
+        if allow_data_json == "Yes":
+            allow_data_calls.click()
+
+    # Create several SUs only
+    else:
+        fill_field(context, "#startUnitIdDec", form_data["Start ID"])
+        fill_field(context, "#endUnitIdDec", form_data["End ID"])
+    fill_field(context, "#alias", form_data["Alias"])
+
+    if "Create" in test_case:
+        select_dropdown(context, "#type div svg", form_data["Type"])
+
+    select_dropdown(context, "#unitType div svg", form_data["Unit Type"])
+    select_dropdown(context, "#priority div svg", form_data["Priority"])
+    select_dropdown(context, "#groupCallPerm div svg", form_data["Group Call Permission"])
+    sleep(1)
+
+    select_dropdown(context, "#unitCallPerm div", form_data["Unit Call Permission"])
+    sleep(1)
+
+    select_dropdown(context, "#pstnCallPerm div svg", form_data["PSTN Call Permission"])
+    fill_field(context, "#info", form_data["Information"])
+
+    unit_type_json = form_data["Unit Type"]
+    if unit_type_json == "Unit":
+        toggle_checkbox(context.page.locator("#affiliateAnywhere input"), form_data["Affiliate Anywhere"] == "Yes")
+
+
+@then("the scenario {test_case} is successful")
+def success(context, test_case):
+    """"""
+    # 1. Check the toast message
+    # Groups/Subscribers Import do not have toast message when success
+    if "Groups Import" not in test_case and "Subscribers Import" not in test_case:
+        toast_message = get_toast_message(context)
+        logger.info(f"toast message is: {toast_message}")
+
+        assert (
+            "OK" in toast_message or "Success" in toast_message or "Updated" in toast_message
+        ), f"Test failed: Unexpected toast message '{toast_message}'"
+
+    # 2. Verify data existence
+    if "Service" not in test_case:
+        verify_data_exist(context, test_case)
+
+
+@when("I select row #{number} from the {test_case} table")
+def select_record(context, number, test_case):
+
+    context.number = number
+    logger.info(f"test_case:{test_case}")
+
+    if "RFSS Map" in test_case:
+        selected_row = context.page.locator(f"xpath=//tr[{number}]/td[4]/div")
+        selected_row.click()
+    elif "Deleting a Supergroup" in context.scenario.name:
+        selected_row = context.page.locator(f"xpath=//tr[{number}]/td[3]")
+        selected_row.click()
+    elif "Backup" in test_case or 'Users' in test_case or 'Supergroup' in test_case:
+    # elif "Backup" in test_case or 'Users' in test_case:
+        selected_row = context.page.locator(f"xpath=//tr[{number}]/td[1]")
+        selected_row.click()
+    elif "Service Area" in test_case or "DAC" in test_case or "Locations" in test_case:
+        selected_row = context.page.locator(f"xpath=//tr[{number}]/td[2]")
+        selected_row.click()
+    else:
+        selected_row = context.page.locator(f"xpath=//tr[{number}]/td[3]")
+        checkbox = context.page.locator(f"//tr[{number}]/td[1]/div/input")
+        checkbox.click()
+
+    context.value = selected_row.inner_text()
+    logger.info(f"context.value:{context.value}")
+    sleep(1)
+
+
+@then("deleting that {test_case} is successful")
+def verify_deleterecord(context, test_case):
+
+    found = verify_data_exist(context, test_case)
+    sleep(1)
+
+    assert found is False, "Deletion NOT successful."
+
+
+@when("I clicked on {test_case} section")
+def click_section(context, test_case):
+
+    if "Group Location Permissions" in test_case:
+        context.page.locator(
+            "xpath=/html/body/div[1]/div/div/div[3]/div[3]/div[2]/div/div[2]/div[21]/div[1]/div/div[1]/a"
+        ).click()
+    elif "Subscriber Location Permissions" in test_case:
+        context.page.locator(
+            "xpath=/html/body/div[1]/div/div/div[3]/div[3]/div[2]/div/div[2]/div[25]/div[1]/div/div[1]/a"
+        ).click()
+    elif "Service Area Location" in test_case:
+        context.page.get_by_role("button", name="Location").click()
+        checkbox = 'xpath=/html/body/div[1]/div/div/div[3]/div[3]/div[2]/div/div/div[4]/div[1]/div/div/div[2]/div/div/div[1]/table/tbody/tr/td[1]/div/input'
         sleep(2)
+        context.page.locator(checkbox).click()
+        context.page.locator(".p-button-label:has-text('Save')").nth(0).click()
+    elif "Subscriber Home RFSS" in test_case:
+        context.page.get_by_role("button", name="Subscriber Home RFSS").click()
+        checkbox = 'xpath=/html/body/div[1]/div/div/div[3]/div[3]/div[2]/div/div/div[4]/div[2]/div/div/div[2]/div/div/div[1]/table/tbody/tr/td[1]/div/input'
+        sleep(2)
+        context.page.locator(checkbox).click()
+        context.page.locator(".p-button-label:has-text('Save')").nth(1).click()
+    elif "Group Home RFSS" in test_case:
+        context.page.get_by_role("button", name="Group Home RFSS").click()
+        checkbox = 'xpath=/html/body/div[1]/div/div/div[3]/div[3]/div[2]/div/div/div[4]/div[3]/div/div/div[2]/div/div/div[1]/table/tbody/tr/td[1]/div/input'
+        sleep(2)
+        context.page.locator(checkbox).click()
+        context.page.locator(".p-button-label:has-text('Save')").nth(2).click()
+    elif "Service Area" in test_case:
+        context.page.get_by_role("button", name="Service Area").click()
+        checkbox = 'xpath=/html/body/div[1]/div/div/div[3]/div[3]/div[2]/div/div/div[9]/div/div/div[2]/div/div/div[1]/table/tbody/tr/td[1]/div/input'
+        context.page.locator(checkbox).click()
+        context.page.locator(".p-button-label:has-text('Save')").click()
 
-    # 2. Click the submenus
-    link = context.page.locator(f'a[href="{url}"]')
-    link.click()
+
+@then("the {test_case} is restricted to that location")
+def verify_restriction(context, test_case):
+    """"""
+    logger.info(context.value)
+
+    # 2. find if attribute is uncheck
+    logger.info(context.number)
+    if "Group" in test_case:
+        checkbox = context.page.locator(
+            f"xpath=/html/body/div[1]/div/div/div[3]/div[3]/div[2]/div/div[2]/div[21]/div[1]/div/div[2]/div/div/div[1]/"
+            f"table/tbody/tr[{context.number}]/td[1]/div/input"
+        )
+    if "Subscriber" in test_case:
+        checkbox = context.page.locator(
+            f"xpath=/html/body/div[1]/div/div/div[3]/div[3]/div[2]/div/div[2]/div[25]/div[1]/div/div[2]/div/div/div[1]/"
+            f"table/tbody/tr[{context.number}]/td[1]/div/input"
+        )
+
+    # 3. return true if uncheck
+    logger.info(checkbox.is_checked())
+    assert not checkbox.is_checked(), "Checkbox is still checked after Save."
+
+
+@when("I select the data from row #{start_row} to #{end_row} in the {test_case} table")
+def delete_many(context, start_row, end_row, test_case):
+    """
+    To delete multiple subscribers or groups
+    """
+    start_row = int(start_row)
+    end_row = int(end_row)
+
+    for number in range(start_row, end_row + 1):
+        select_record(context, number, test_case)
+        pressing_shiftey_andhold(context)
+        number = +1
+
+
+@when("I split the {test_case} into 2 maps with the first one having max Unit ID of {max}")
+def split_map(context, test_case, max):
+    """
+    To split the Home RFSS Map into 2 maps
+    """
+
+    context.test_case = test_case
+    context.max_1stgroup = int(max)
+
+    if "Group" in test_case:
+        split_id = context.page.locator('input[placeholder="Group ID Split"]')
+    else:
+        split_id = context.page.locator('input[placeholder="Unit ID Split"]')
+
+    split_id.fill(str(context.max_1stgroup))
+    sleep(1)
+
+    button_click(context, "Confirm Split")
+
+
+@then("splitting into 2 maps is successful")
+def verify_map_split(context):
+    """
+    To verify that split is successful
+    """
+
+    found_2nd_min = False
+    found_2nd_min = verify_data_exist(context, context.test_case)
+
+    assert found_2nd_min, "The data for the second split group is NOT found."
+
+
+@when("I upload the {test_case} CSV file")
+def upload_csv_file(context, test_case):
+    """
+    To upload a CSV file
+    """
+
+    if "Group" in test_case:
+        file_path = "features/steps/data/FleetManager_GroupsImport_Data.csv"
+
+    if "Subscriber" in test_case:
+        file_path = "features/steps/data/FleetManager_SubscribersImport_Data.csv"
+
+    logger.info(f"file_path:{file_path}")
+    absolute_file_path = os.path.abspath(file_path)
+    upload = context.page.locator('input[type="file"]')
+
+    upload.set_input_files(absolute_file_path)
+    logger.info("Uploaded file:", absolute_file_path)
+
     sleep(2)
 
 
-def load_testcase_json(context, test_case):
+@when("I click on the all checkbox")
+def tick_all_checkbox(context):
     """"""
-    logger.info(f"testcase in load_jsonFile: {test_case}")
-
-    file_mapping = {
-    "Supergroup": "supergroup.json",
-    "Subscriber": "subscribers.json",
-    "User": "users.json",
-    "DAC Group": "areas_dac.json",
-    "Group": "groups.json",
-    "Service": "areas_dac.json"
-    }
-
-    for key, file_name in file_mapping.items():
-        if key in test_case:
-            logger.info(f'{key}, {file_name}')
-            with open(f"features/steps/data/fleet-manager/{file_name}") as json_data:
-                return json.load(json_data)
-
-
-def load_json_data(context, test_case):
-
-    data = load_testcase_json(context, test_case)
-    form_data = data[test_case]
-    return form_data
-
-
-def verify_data_exist(context, test_case):
-    """"""
-    if "Edit" in test_case:
-        button_click(context, "Back")
-
-    search_key = find_search_key(context, test_case)
-    logger.info(f"searchKey: {search_key}")
+    context.page.locator(
+        "xpath=/html/body/div[1]/div/div/div[3]/div[3]/div[2]/div/div/div[2]/table/thead/tr[2]/th[1]/div/input"
+    ).click()
     sleep(1)
 
-    table = context.page.query_selector("table.p-datatable-table")
-    sleep(1)
 
-    rows = table.query_selector_all("tr")
-    sleep(1)
+@when('I Create a {test_case} Backup')
+def create_backup(context, test_case):
 
-    found = False
+    if 'Fleet' in test_case:
+        context.page.locator(f'a[href="/p25fm/backups"]')
 
-    for row in rows:
-        # Select all cells within the current row
-        cells = row.query_selector_all("td")
-        for cell in cells:
-            cell_text = cell.inner_text().strip()
-            logger.info(cell_text)
-            if search_key in cell_text:
-                logger.info(f"Found! The {search_key} data is in the table.")
-                found = True
-                break
-        if found:
-            break
-    return found
+    backup_files = get_file_names(context)
+    context.initial_count = len(backup_files)
+
+    button_click(context, 'Backup')
+    confirmation_dialog_box(context, "OK")
 
 
-def find_search_key(context, test_case):
+@then('the table contains the newest {test_case} Backup')
+def verify_backup_created(context, test_case):
 
-    logger.info(f"in searchkey, testcase is {test_case}")
+    new_backup_files = get_file_names(context)
+    files_count = len(new_backup_files)
 
-    logger.info(context.scenario.name)
+    assert (context.initial_count + 1) == files_count, 'Failed in backup creation'
 
-    if "Split" in context.scenario.name:
-        return str(context.max_1stgroup)
 
-    elif "Delet" in context.scenario.name:
-        logger.info(f"context.value: {context.value}")
-        return context.value
+@when('I created {test_case} and added other changes to it by mistake')
+def create_data(context, test_case):
 
-    elif "Upload" in test_case:
-        if "Group" in test_case:
-            # one of the group ID in the file
-            return "7006"
-        else:
-            # one of the  SUID in the file
-            return "70006"
+    if "Group" in test_case:
+        # creating groups
+        navigating_pages(context, "Groups")
+        button_click(context, "Create Many")
+        edit_create_groups(context, "Create Groups Import")
+        button_click(context, "Save")
+        button_click(context, "Import All")
+        confirmation_dialog_box(context, "Yes")
+        button_click(context, "Finish")
 
+
+@when('I restore the latest {test_case} Backup file')
+def backup_restore(context, test_case):
+
+    if 'Fleet' in test_case:
+        context.page.locator(f'a[href="/p25fm/backups"]').click()
+
+    context.page.click("table tr:nth-child(1) td:nth-child(1)")
+
+    button_click(context, "Restore")
+    confirmation_dialog_box(context, "OK")
+    # wait time for the restore to process
+    sleep(9)
+
+
+@then('the previously correct data is now restored')
+def restore_status(context):
+
+    text = context.page.locator(".tait-modal").inner_text()
+    logger.info(text)
+
+    assert 'backup restored' in text, 'Restoring a backup is NOT succesful'
+
+
+@when('download that latest backup file')
+def download_backup(context):
+    with context.page.expect_download() as download_info:
+        context.page.get_by_label("Download").click()
+        download = download_info.value
+
+    context.download_dir = 'features/steps/data/fleet-manager/downloads/'
+
+    download.save_as(os.path.join(context.download_dir, context.value))
+
+
+@then('the file is in the downloads folder')
+def verify_backup(context):
+
+    file = context.value
+    logger.info(file)
+    file_path = f"{context.download_dir}/{file}"
+    logger.info(file_path)
+
+    assert file in file_path, 'The backup file is not downloaded.'
+
+    os.remove(file_path)
+
+
+@when('I fill out the {test_case} form')
+def create_edit_user(context, test_case):
+
+    form_data = load_json_data(context, test_case)
+
+    if 'Create' in test_case:
+        username = context.page.locator('#username')
+        username.fill(form_data["Username"])
+
+    fill_field(context, '#name', (form_data["Name"]))
+    fill_field(context, '#password input', (form_data["Password"]))
+    context.page.locator("#password_panel").click()
+    fill_field(context, '#confirm-password  input', (form_data["Confirm Password"]))
+    context.page.locator("#confirm-password_panel").click()
+    fill_field(context, '#comment', (form_data["Comment"]))
+
+    if form_data["Disabled"] == "Yes": 
+        toggle_checkbox(context.page.locator("#disabled input"), form_data["Disabled"] == "Yes")
     else:
-        form_data = load_json_data(context, test_case)
-
-    # Mapping of test cases to their corresponding form data keys
-    # key_map = {
-    #     "Create Group": "Group ID",
-    #     "Edit Group": "Alias",
-    #     "Create Subscriber": "Unit ID",
-    #     "Edit Subscriber": "Alias",
-    #     "RFSS Map": "Maximum",
-    #     "User": "Name",
-    #     "Supergroup": "Alias",
-    #     "Service Area": "Area Name",
-    #     "Import": "Start ID",
-    #     "Create DAC Group Profile": "DAC Group ID",
-    #     "Edit DAC Group Profile": "Name",
-    #     "DAC Group Map": "Alias",
-    #     "DAC Group Map": "Alias"
-    # }
-
-    # # Fetch the appropriate key from the map
-    # data_key = key_map.get(test_case)
-
-    # if data_key:
-    #     return form_data.get(data_key)
-
-    key_map = {
-        "Create Group": "Group ID",
-        "Edit Group": "Alias",
-        "Create Subscriber": "Unit ID",
-        "Edit Subscriber": "Alias",
-        "RFSS Map": "Maximum",
-        "User": "Name",
-        "Supergroup": "Alias",
-        "Service Area": "Area Name",
-        "Import": "Start ID",
-        "Create DAC Group Profile": "DAC Group ID",
-        "Edit DAC Group Profile": "Name",
-        "DAC Group Map": "Alias"
-    }
-
-    # Fetch the appropriate key from the map by checking if a substring exists in test_case
-    data_key = None
-    for key in key_map:
-        if key in test_case:
-            data_key = key_map[key]
-            break
-
-    if data_key:
-        return form_data.get(data_key)
+        if 'Console' not in test_case:
+            toggle_checkbox(context.page.locator("#admin input"), form_data["Fleet Administrator"] == "Yes")
+        else:
+            select_dropdown(context, '#pv_id_47 span', form_data["Default"])
 
 
-def get_file_names(context):
+@when('I login using the new credential')
+def new_credential_login(context):
 
-    table = context.page.query_selector("table.p-datatable-table")
-
-    rows = table.query_selector_all("tr")
-
-    backup_files = []
-
-    for row in rows:
-        first_td = row.query_selector('td:first-child')
-        if first_td:  # Ensure there is a <td> element in the row
-            backup_files.append(first_td.text_content().strip())
-
-    return backup_files
+    form_data = load_json_data(context, 'Create User')
+    login(context, form_data["Username"], form_data["Password"])
 
 
-def fill_field(context, selector, value):
-    field = context.page.locator(selector)
-    field.clear()
-    field.fill(value)
+@then('I am able to see the Fleet Manager home page')
+def newc_login_success(context):
+
+    form_data = load_json_data(context, 'Create User')
+    user_in_webui = context.page.locator('//*[@id="app"]/div/div/div[2]/div/div[1]/a[1]').inner_text()
+
+    assert form_data['Name'] == user_in_webui, 'Login with new credential is not successful'
 
 
-def select_dropdown(context, dropdown_selector, option_value):
-    dropdown = context.page.locator(dropdown_selector)
-    dropdown.click()
-    context.page.locator(f'li[aria-label="{option_value}"]').click()
+@when('I complete the form with a {test_case} scenario')
+def create_edit_supergroup(context, test_case):
+
+    form_data = load_json_data(context, test_case)
+
+    if 'Create' in test_case:
+        fill_field(context, '#groupIdDec', form_data["Group ID"])
+
+    fill_field(context, '#alias', form_data["Alias"])
+    fill_field(context, '#rfHangTime input', form_data["RF Hangtime"])
+    select_dropdown(context, '#priority', form_data["Priority"])
 
 
-def toggle_checkbox(checkbox, should_check):
-    if checkbox.is_checked() != should_check:
-        checkbox.click()
+@when('I {test_case} to the Supergroup')
+def add_members_supergroup(context, test_case):
+
+    button_click(context, test_case)
+
+    if 'Visiting' in test_case:
+        context.page.locator(f"xpath=//tr[1]/td[2]/div").nth(1).click()
+    else:
+        context.page.locator(f"xpath=//tr[1]/td[2]/div").click()
+
+    button_click(context, "Add")
+
+    close_button = context.page.locator('div.p-dialog-header button')
+    close_button.click()
+
+
+@when('I fill-out the {test_case} form')
+def create_edit_service_area(context, test_case):
+
+    form_data = load_json_data(context, test_case)
+
+    fill_field(context, '#serviceArea', form_data["Area Name"])
+    select_dropdown(context, '#agencyName', form_data["Agency"])
+    fill_field(context, '#description', form_data["Description"])
+
+
+@when('I submit the {test_case} form with the required details')
+def create_edit_dac_profile(context, test_case):
+
+    form_data = load_json_data(context, test_case)
+
+    fill_field(context, '#dacgrpName', form_data["Name"])
+    fill_field(context, '#dacId input', form_data["DAC Group ID"])
+    select_dropdown(context, '#otarProtocol span', form_data["OTAR Transport Protocol"])
+    fill_field(context, '#otarPortNumber input', form_data["OTAR Port Number"])
+    toggle_checkbox(context.page.locator("#encrypt input"), form_data["Encrypted"] == "Yes")
+    select_dropdown(context, '#locationDataProtocol span', form_data["Location Data Transport Protocol"])
+    fill_field(context, '#locationDataPortNumber input', form_data["Location Data Port Number"])
+    select_dropdown(context, '#otapProtocol span', form_data["OTAP Transport Protocol"])
+    fill_field(context, '#otapPortNumber input', form_data["OTAP Port Number"])
+
+
+@when('I input data into the {test_case} form')
+def create_edit_dac_map(context, test_case):
+
+    form_data = load_json_data(context, test_case)
+
+    fill_field(context, '#wacnIdDec', form_data["WACN ID"])
+    fill_field(context, '#systemIdDec', form_data["System ID"])
+    fill_field(context, '#unitIdMinDec', form_data["Minumum"])
+    fill_field(context, '#unitIdMaxDec', form_data["Maximum"])
+    select_dropdown(context, '#dacgrpName span', form_data["DAC Group Name"])
+    select_dropdown(context, '#ipPool span', form_data["IP Pool"])
+    fill_field(context, '#alias', form_data["Alias"])
