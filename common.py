@@ -61,7 +61,6 @@ def logout(context):
 @when("I press the {button_text} button")
 def button_click(context, button_text):
     """"""
-
     buttons = context.page.locator(".p-button-label")
 
     # Find and click the button with the exact text
