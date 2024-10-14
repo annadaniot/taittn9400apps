@@ -17,6 +17,8 @@ def navigating_pages(context, submenu):
         "Groups": 2,
         "Groups RFSS Map": 2,
         "Supergroups": 3,
+        "Locations": 4,
+        "Service Areas": 4,
         "SN Contexts": 5,
         "IP Address Pool": 5,
         "DAC Group Profiles": 5,
@@ -85,21 +87,20 @@ def load_testcase_json(context, test_case):
     """"""
     logger.info(f"testcase in load_jsonFile: {test_case}")
 
-    if "Supergroup" in test_case:
-        with open("features/steps/data/fleet-manager/supergroup.json") as json_data:
-            return json.load(json_data)
+    file_mapping = {
+    "Supergroup": "supergroup.json",
+    "Subscriber": "subscribers.json",
+    "User": "users.json",
+    "DAC Group": "areas_dac.json",
+    "Group": "groups.json",
+    "Service": "areas_dac.json"
+    }
 
-    elif "Subscriber" in test_case:
-        with open("features/steps/data/fleet-manager/subscribers.json") as json_data:
-            return json.load(json_data)
-
-    elif "User" in test_case:
-        with open("features/steps/data/fleet-manager/users.json") as json_data:
-            return json.load(json_data)       
-
-    elif "Group" in test_case:
-        with open("features/steps/data/fleet-manager/groups.json") as json_data:
-            return json.load(json_data)
+    for key, file_name in file_mapping.items():
+        if key in test_case:
+            logger.info(f'{key}, {file_name}')
+            with open(f"features/steps/data/fleet-manager/{file_name}") as json_data:
+                return json.load(json_data)
 
 
 def load_json_data(context, test_case):
@@ -165,31 +166,53 @@ def find_search_key(context, test_case):
     else:
         form_data = load_json_data(context, test_case)
 
-        if test_case == "Create Group":
-            return form_data["Group ID"]
+    # Mapping of test cases to their corresponding form data keys
+    # key_map = {
+    #     "Create Group": "Group ID",
+    #     "Edit Group": "Alias",
+    #     "Create Subscriber": "Unit ID",
+    #     "Edit Subscriber": "Alias",
+    #     "RFSS Map": "Maximum",
+    #     "User": "Name",
+    #     "Supergroup": "Alias",
+    #     "Service Area": "Area Name",
+    #     "Import": "Start ID",
+    #     "Create DAC Group Profile": "DAC Group ID",
+    #     "Edit DAC Group Profile": "Name",
+    #     "DAC Group Map": "Alias",
+    #     "DAC Group Map": "Alias"
+    # }
 
-        elif test_case == "Edit Group":
-            return form_data["Alias"]
+    # # Fetch the appropriate key from the map
+    # data_key = key_map.get(test_case)
 
-        elif "Groups Import" in test_case or "Subscribers Import" in test_case:
-            return form_data["Start ID"]
+    # if data_key:
+    #     return form_data.get(data_key)
 
-        elif test_case == "Create Subscriber":
-            return form_data["Unit ID"]
+    key_map = {
+        "Create Group": "Group ID",
+        "Edit Group": "Alias",
+        "Create Subscriber": "Unit ID",
+        "Edit Subscriber": "Alias",
+        "RFSS Map": "Maximum",
+        "User": "Name",
+        "Supergroup": "Alias",
+        "Service Area": "Area Name",
+        "Import": "Start ID",
+        "Create DAC Group Profile": "DAC Group ID",
+        "Edit DAC Group Profile": "Name",
+        "DAC Group Map": "Alias"
+    }
 
-        elif test_case == "Edit Subscriber":
-            return form_data["Alias"]
+    # Fetch the appropriate key from the map by checking if a substring exists in test_case
+    data_key = None
+    for key in key_map:
+        if key in test_case:
+            data_key = key_map[key]
+            break
 
-        elif "RFSS Map" in test_case:
-            return form_data["Maximum"]
-
-        elif 'User' in test_case:
-            return form_data["Name"]
-        
-        elif 'Supergroup' in test_case:
-            return form_data["Alias"]
-        else:
-            logger.info(f'{test_case} not found.')
+    if data_key:
+        return form_data.get(data_key)
 
 
 def get_file_names(context):
@@ -218,3 +241,8 @@ def select_dropdown(context, dropdown_selector, option_value):
     dropdown = context.page.locator(dropdown_selector)
     dropdown.click()
     context.page.locator(f'li[aria-label="{option_value}"]').click()
+
+
+def toggle_checkbox(checkbox, should_check):
+    if checkbox.is_checked() != should_check:
+        checkbox.click()
