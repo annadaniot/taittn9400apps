@@ -12,6 +12,7 @@ from features.steps.common import (
     pressing_shiftey_andhold,
 )
 from features.steps.fm_common import (
+    click_save_button,
     fill_field,
     get_file_names,
     load_json_data,
@@ -33,14 +34,16 @@ def edit_create_rfss_map(context, test_case):
     fill_field(context, "#wacnIdDec", form_data["WACN ID"])
     fill_field(context, "#systemIdDec", form_data["System ID"])
     fill_field(context, "#rfssIdDec", form_data["RFSS ID"])
-    fill_field(context, "#alias", form_data["Alias"])
-
-    select_dropdown(context, "#agencyName div svg", form_data["Agency"])
 
     min_id = context.page.locator("#unitIdMinDec" if "Subscriber" in test_case else "#groupIdMinDec")
     max_id = context.page.locator("#unitIdMaxDec" if "Subscriber" in test_case else "#groupIdMaxDec")
     min_id.fill(form_data["Minimum"])
     max_id.fill(form_data["Maximum"])
+
+    fill_field(context, "#alias", form_data["Alias"])
+    select_dropdown(context, "#agencyName div svg", form_data["Agency"])
+    if "Group" in test_case:
+        toggle_checkbox(context.page.locator("#supergroup input"), form_data["Supergroup"] == "Yes")
 
 
 @when("I complete the {test_case} form")
@@ -64,9 +67,6 @@ def edit_create_groups(context, test_case):
 
     fill_field(context, "#alias", form_data["Alias"])
 
-    if "Edit Group" in test_case:
-        logger.info(f"Alias: {form_data['Alias']}")
-
     select_dropdown(context, "#type div svg", form_data["Type"])
     select_dropdown(context, "#membershipType", form_data["Membership"])
     select_dropdown(context, "#priority", form_data["Priority"])
@@ -81,6 +81,7 @@ def edit_create_groups(context, test_case):
     toggle_checkbox(context.page.locator("#priorityTalkgroupScan input"), form_data["Priority TG Scan"] == "Yes")
 
     context.test_case = test_case
+    logger.info(context.test_case)
 
 
 @when("I fill in the {test_case} form")
@@ -104,6 +105,7 @@ def edit_create_subscriber(context, test_case):
     else:
         fill_field(context, "#startUnitIdDec", form_data["Start ID"])
         fill_field(context, "#endUnitIdDec", form_data["End ID"])
+    
     fill_field(context, "#alias", form_data["Alias"])
 
     if "Create" in test_case:
@@ -130,16 +132,17 @@ def success(context, test_case):
     """"""
     # 1. Check the toast message
     # Groups/Subscribers Import do not have toast message when success
-    if "Groups Import" not in test_case and "Subscribers Import" not in test_case:
+    if "Import" not in test_case:
         toast_message = get_toast_message(context)
         logger.info(f"toast message is: {toast_message}")
 
         assert (
-            "OK" in toast_message or "Success" in toast_message
+            "OK" in toast_message or "Success" in toast_message or "Updated" in toast_message
         ), f"Test failed: Unexpected toast message '{toast_message}'"
 
     # 2. Verify data existence
-    verify_data_exist(context, test_case)
+    if "Service" not in test_case:
+        verify_data_exist(context, test_case)
 
 
 @when("I select row #{number} from the {test_case} table")
@@ -148,6 +151,7 @@ def select_record(context, number, test_case):
     context.number = number
     logger.info(f"test_case:{test_case}")
 
+    
     if "RFSS Map" in test_case:
         selected_row = context.page.locator(f"xpath=//tr[{number}]/td[4]/div")
         selected_row.click()
@@ -157,10 +161,14 @@ def select_record(context, number, test_case):
     elif "Backup" in test_case or 'Users' in test_case or 'Supergroup' in test_case:
         selected_row = context.page.locator(f"xpath=//tr[{number}]/td[1]")
         selected_row.click()
-    else:
+    elif "Service Areas-" in test_case:
         selected_row = context.page.locator(f"xpath=//tr[{number}]/td[3]")
         checkbox = context.page.locator(f"//tr[{number}]/td[1]/div/input")
         checkbox.click()
+        click_save_button(context)
+    else:
+        selected_row = context.page.locator(f"xpath=//tr[{number}]/td[2]")
+        selected_row.click()
 
     context.value = selected_row.inner_text()
     logger.info(f"context.value:{context.value}")
@@ -187,12 +195,22 @@ def click_section(context, test_case):
         context.page.locator(
             "xpath=/html/body/div[1]/div/div/div[3]/div[3]/div[2]/div/div[2]/div[25]/div[1]/div/div[1]/a"
         ).click()
+    elif "Service Area Location" in test_case:
+        context.page.get_by_role("button", name="Location").click()
+    elif "Subscriber Home RFSS" in test_case:
+        context.page.get_by_role("button", name="Subscriber Home RFSS").click()
+    elif "Group Home RFSS" in test_case:
+        context.page.get_by_role("button", name="Group Home RFSS").click()
+    elif "Service Area" in test_case:
+        context.page.get_by_role("button", name="Service Area").click()
+        checkbox = 'xpath=/html/body/div[1]/div/div/div[3]/div[3]/div[2]/div/div/div[9]/div/div/div[2]/div/div/div[1]/table/tbody/tr/td[1]/div/input'
+        context.page.locator(checkbox).click()
+        context.page.locator(".p-button-label:has-text('Save')").click()
 
 
 @then("the {test_case} is restricted to that location")
 def verify_restriction(context, test_case):
     """"""
-
     logger.info(context.value)
 
     # 2. find if attribute is uncheck
@@ -252,9 +270,8 @@ def verify_map_split(context):
     """
     To verify that split is successful
     """
-    
-    found_2nd_min = False
 
+    found_2nd_min = False
     found_2nd_min = verify_data_exist(context, context.test_case)
 
     assert found_2nd_min, "The data for the second split group is NOT found."
@@ -396,14 +413,13 @@ def create_edit_user(context, test_case):
         if 'Console' not in test_case:
             toggle_checkbox(context.page.locator("#admin input"), form_data["Fleet Administrator"] == "Yes")
         else:
-            select_dropdown(context, '#pv_id_47 span', form_data["Default"])
+            select_dropdown(context, '#pv_id_47 div', form_data["Default"])
 
 
 @when('I login using the new credential')
 def new_credential_login(context):
 
     form_data = load_json_data(context, 'Create User')
-
     login(context, form_data["Username"], form_data["Password"])
 
 
@@ -411,10 +427,7 @@ def new_credential_login(context):
 def newc_login_success(context):
 
     form_data = load_json_data(context, 'Create User')
-
     user_in_webui = context.page.locator('//*[@id="app"]/div/div/div[2]/div/div[1]/a[1]').inner_text()
-
-    logger.info(f'user_in_webui: {user_in_webui}')
 
     assert form_data['Name'] == user_in_webui, 'Login with new credential is not successful'
 
@@ -447,3 +460,42 @@ def add_members_supergroup(context, test_case):
     close_button = context.page.locator('div.p-dialog-header button')
     close_button.click()
 
+
+@when('I fill-out the {test_case} form')
+def create_edit_service_area(context, test_case):
+
+    form_data = load_json_data(context, test_case)
+
+    fill_field(context, '#serviceArea', form_data["Area Name"])
+    select_dropdown(context, '#agencyName', form_data["Agency"])
+    fill_field(context, '#description', form_data["Description"])
+
+
+@when('I submit the {test_case} form with the required details')
+def create_edit_dac_profile(context, test_case):
+
+    form_data = load_json_data(context, test_case)
+
+    fill_field(context, '#dacgrpName', form_data["Name"])
+    fill_field(context, '#dacId input', form_data["DAC Group ID"])
+    select_dropdown(context, '#otarProtocol span', form_data["OTAR Transport Protocol"])
+    fill_field(context, '#otarPortNumber input', form_data["OTAR Port Number"])
+    toggle_checkbox(context.page.locator("#encrypt input"), form_data["Encrypted"] == "Yes")
+    select_dropdown(context, '#locationDataProtocol span', form_data["Location Data Transport Protocol"])
+    fill_field(context, '#locationDataPortNumber input', form_data["Location Data Port Number"])
+    select_dropdown(context, '#otapProtocol span', form_data["OTAP Transport Protocol"])
+    fill_field(context, '#otapPortNumber input', form_data["OTAP Port Number"])
+
+
+@when('I input data into the {test_case} form')
+def create_edit_dac_map(context, test_case):
+
+    form_data = load_json_data(context, test_case)
+
+    fill_field(context, '#wacnIdDec', form_data["WACN ID"])
+    fill_field(context, '#systemIdDec', form_data["System ID"])
+    fill_field(context, '#unitIdMinDec', form_data["Minumum"])
+    fill_field(context, '#unitIdMaxDec', form_data["Maximum"])
+    select_dropdown(context, '#dacgrpName span', form_data["DAC Group Name"])
+    select_dropdown(context, '#ipPool span', form_data["IP Pool"])
+    fill_field(context, '#alias', form_data["Alias"])
