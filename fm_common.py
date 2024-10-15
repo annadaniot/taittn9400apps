@@ -127,7 +127,6 @@ def verify_data_exist(context, test_case):
     found = False
 
     for row in rows:
-        # Select all cells within the current row
         cells = row.query_selector_all("td")
         for cell in cells:
             cell_text = cell.inner_text().strip()
@@ -166,12 +165,12 @@ def find_search_key(context, test_case):
     key_map = {
         "Import": "Start ID",
         "RFSS Map": "Maximum",
+        "Supergroup": "Alias",
         "Create Group": "Group ID",
         "Edit Group": "Alias",
         "Create Subscriber": "Unit ID",
         "Edit Subscriber": "Alias",
         "User": "Name",
-        "Supergroup": "Alias",
         "Service Area": "Area Name",
         "Create DAC Group Profile": "DAC Group ID",
         "Edit DAC Group Profile": "Name",
