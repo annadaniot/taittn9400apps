@@ -3,6 +3,7 @@ from time import sleep
 from behave import when
 from features.logger import logger
 from features.steps.common import button_click
+from playwright.sync_api import TimeoutError
 
 
 @when("I clicked on FM {submenu} menu")
@@ -60,9 +61,7 @@ def navigating_pages(context, submenu):
     }
 
     menu_num = menu_dict[submenu]
-
     url = link_url_dict[submenu]
-
 
     # 1. Expanding Menus
     # if Subscribers, then no need to click since submenus, Subscribers is displayed already
@@ -146,8 +145,6 @@ def find_search_key(context, test_case):
 
     logger.info(f"in searchkey, testcase is {test_case}")
 
-    logger.info(context.scenario.name)
-
     if "Split" in context.scenario.name:
         return str(context.max_1stgroup)
 
@@ -166,48 +163,24 @@ def find_search_key(context, test_case):
     else:
         form_data = load_json_data(context, test_case)
 
-    # Mapping of test cases to their corresponding form data keys
-    # key_map = {
-    #     "Create Group": "Group ID",
-    #     "Edit Group": "Alias",
-    #     "Create Subscriber": "Unit ID",
-    #     "Edit Subscriber": "Alias",
-    #     "RFSS Map": "Maximum",
-    #     "User": "Name",
-    #     "Supergroup": "Alias",
-    #     "Service Area": "Area Name",
-    #     "Import": "Start ID",
-    #     "Create DAC Group Profile": "DAC Group ID",
-    #     "Edit DAC Group Profile": "Name",
-    #     "DAC Group Map": "Alias",
-    #     "DAC Group Map": "Alias"
-    # }
-
-    # # Fetch the appropriate key from the map
-    # data_key = key_map.get(test_case)
-
-    # if data_key:
-    #     return form_data.get(data_key)
-
     key_map = {
+        "Import": "Start ID",
+        "RFSS Map": "Maximum",
         "Create Group": "Group ID",
         "Edit Group": "Alias",
         "Create Subscriber": "Unit ID",
         "Edit Subscriber": "Alias",
-        "RFSS Map": "Maximum",
         "User": "Name",
         "Supergroup": "Alias",
         "Service Area": "Area Name",
-        "Import": "Start ID",
         "Create DAC Group Profile": "DAC Group ID",
         "Edit DAC Group Profile": "Name",
         "DAC Group Map": "Alias"
     }
 
-    # Fetch the appropriate key from the map by checking if a substring exists in test_case
     data_key = None
     for key in key_map:
-        logger.info(key, data_key)
+        logger.info(f'{key}, {data_key}')
         if key in test_case:
             data_key = key_map[key]
             break
@@ -247,3 +220,22 @@ def select_dropdown(context, dropdown_selector, option_value):
 def toggle_checkbox(checkbox, should_check):
     if checkbox.is_checked() != should_check:
         checkbox.click()
+
+
+def click_save_button(context):
+    save_buttons = [
+        context.page.locator(".p-button-label:has-text('Save')").nth(0),
+        context.page.locator(".p-button-label:has-text('Save')").nth(1),
+        context.page.locator(".p-button-label:has-text('Save')").nth(2)
+    ]
+
+    for save_button in save_buttons:
+        try:
+            save_button.wait_for(state='visible', timeout=1000)  
+            save_button.click()
+            break  
+        except TimeoutError:
+            continue
+
+    else:
+        raise Exception("No 'Save' button was clickable after trying all available options.")
