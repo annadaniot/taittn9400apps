@@ -42,7 +42,7 @@ def edit_create_rfss_map(context, test_case):
 
     fill_field(context, "#alias", form_data["Alias"])
     select_dropdown(context, "#agencyName div svg", form_data["Agency"])
-    if "Group" in test_case:
+    if 'Group' in test_case or 'Supergroup' in test_case:
         toggle_checkbox(context.page.locator("#supergroup input"), form_data["Supergroup"] == "Yes")
 
 
@@ -151,21 +151,21 @@ def select_record(context, number, test_case):
     context.number = number
     logger.info(f"test_case:{test_case}")
 
-    
+    checkbox = context.page.locator(f"//tr[{number}]/td[1]/div/input")
+
     if "RFSS Map" in test_case:
         selected_row = context.page.locator(f"xpath=//tr[{number}]/td[4]/div")
-        selected_row.click()
-    elif "Deleting a Supergroup" in context.scenario.name:
-        selected_row = context.page.locator(f"xpath=//tr[{number}]/td[3]")
         selected_row.click()
     elif "Backup" in test_case or 'Users' in test_case or 'Supergroup' in test_case:
         selected_row = context.page.locator(f"xpath=//tr[{number}]/td[1]")
         selected_row.click()
-    elif "Service Areas-" in test_case:
+    elif checkbox.count() > 0:
         selected_row = context.page.locator(f"xpath=//tr[{number}]/td[3]")
         checkbox = context.page.locator(f"//tr[{number}]/td[1]/div/input")
         checkbox.click()
-        click_save_button(context)
+        if "Service Areas-" in test_case:
+            logger.info("Service Areas-")
+            click_save_button(context)
     else:
         selected_row = context.page.locator(f"xpath=//tr[{number}]/td[2]")
         selected_row.click()
@@ -187,25 +187,7 @@ def verify_deleterecord(context, test_case):
 @when("I clicked on {test_case} section")
 def click_section(context, test_case):
 
-    if "Group Location Permissions" in test_case:
-        context.page.locator(
-            "xpath=/html/body/div[1]/div/div/div[3]/div[3]/div[2]/div/div[2]/div[21]/div[1]/div/div[1]/a"
-        ).click()
-    elif "Subscriber Location Permissions" in test_case:
-        context.page.locator(
-            "xpath=/html/body/div[1]/div/div/div[3]/div[3]/div[2]/div/div[2]/div[25]/div[1]/div/div[1]/a"
-        ).click()
-    elif "Service Area Location" in test_case:
-        context.page.get_by_role("button", name="Location").click()
-    elif "Subscriber Home RFSS" in test_case:
-        context.page.get_by_role("button", name="Subscriber Home RFSS").click()
-    elif "Group Home RFSS" in test_case:
-        context.page.get_by_role("button", name="Group Home RFSS").click()
-    elif "Service Area" in test_case:
-        context.page.get_by_role("button", name="Service Area").click()
-        checkbox = 'xpath=/html/body/div[1]/div/div/div[3]/div[3]/div[2]/div/div/div[9]/div/div/div[2]/div/div/div[1]/table/tbody/tr/td[1]/div/input'
-        context.page.locator(checkbox).click()
-        context.page.locator(".p-button-label:has-text('Save')").click()
+    context.page.get_by_role("button", name=test_case).click()
 
 
 @then("the {test_case} is restricted to that location")
@@ -305,6 +287,7 @@ def tick_all_checkbox(context):
     context.page.locator(
         "xpath=/html/body/div[1]/div/div/div[3]/div[3]/div[2]/div/div/div[2]/table/thead/tr[2]/th[1]/div/input"
     ).click()
+    
     sleep(1)
 
 
