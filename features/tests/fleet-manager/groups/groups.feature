@@ -22,15 +22,14 @@ Feature: Fleet Manager - Groups
         Then the scenario Edit Group is successful
 
     Scenario: Adding Location Restriction to a Group
-        When I select row #1 from the Group table
+        When I select row #1 from the Groups table
         And I press the View button
         And I clicked on Group Location Permissions section
         And I select row #2 from the Group Location Permissions table
-        And I press the Save button
         Then the Group is restricted to that location
 
     Scenario: Deleting Group
-        When I select row #1 from the Group table
+        When I select row #1 from the Groups table
         And I press the Delete button
         And I choose Yes on the dialog box
         Then deleting that Group is successful

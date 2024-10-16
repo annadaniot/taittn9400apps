@@ -26,8 +26,8 @@ Feature: Fleet Manager - Locations
         When I clicked on FM Service Areas menu
         And I select row #1 from the Service Areas table
         And I press the View button
-        And I clicked on Service Area Location section
-        And I select row #1 from the Service Areas Location table
+        And I clicked on Location section
+        And I select row #1 from the Service Areas-Location table
         Then the scenario Adding Location to a Service Area is successful
         
     Scenario: Adding Subscriber Home RFSS to a Service Area
@@ -35,31 +35,48 @@ Feature: Fleet Manager - Locations
         And I select row #1 from the Service Areas table
         And I press the View button
         And I clicked on Subscriber Home RFSS section
-        And I select row #1 from the Subscriber Home RFSS table
+        And I select row #1 from the Service Areas-Subscriber Home RFSS table
         Then the scenario Adding Subscriber Home RFSS to a Service Area is successful
         
     Scenario: Adding Group Home RFSS to a Service Area
         When I clicked on FM Service Areas menu
-        And When I select row #1 from the Service Areas table
+        And I select row #1 from the Service Areas table
         And I press the View button
         And I clicked on Group Home RFSS section
-        And I select row #1 from the Group Home RFSS table
+        And I select row #1 from the Service Areas-Group Home RFSS table
         Then the scenario Adding Group Home RFSS to a Service Area is successful           
     
-    Scenario: Deleting Restrictions to a Service Area
+    Scenario: Deleting Restrictions to a Location in Service Area
         When I clicked on FM Service Areas menu
-        And When I select row #1 from the Service Areas table
+        And I select row #1 from the Service Areas table
         And I press the View button
-        And I clicked on Service Area Location section
+        And I clicked on Location section
+        And I select row #1 from the Service Areas-Location table
+        Then the scenario Deleting Restriction to a Location in Service Area is successful
+        
+    Scenario: Deleting Restrictions to a Subscriber Home RFSS in Service Area
+        When I clicked on FM Service Areas menu
+        And I select row #1 from the Service Areas table
+        And I press the View button  
         And I clicked on Subscriber Home RFSS section
+        And I select row #1 from the Service Areas-Subscriber Home RFSS table
+        Then the scenario Deleting Restriction to a Subscriber Home RFSS in Service Area is successful
+            
+    Scenario: Deleting Restrictions to a Group Home RFSS in Service Area
+        When I clicked on FM Service Areas menu
+        And I select row #1 from the Service Areas table
+        And I press the View button
         And I clicked on Group Home RFSS section
-        Then the scenario Deleting Restriction to a Service Area is successful
+        And I select row #1 from the Service Areas-Group Home RFSS table
+        Then the scenario Deleting Restriction to a Group Home RFSS in Service Area is successful
     
     Scenario: Adding Service Area to a Location
         When I clicked on FM Locations menu
         And I select row #1 from the Locations table
         And I press the View button
         And I clicked on Service Area section
+        And I select row #1 from the Service Areas table
+        And I press the Save button
         Then the scenario Adding Service Area to a Location is successful 
     
     Scenario: Removing Service Area to a Location
@@ -67,6 +84,8 @@ Feature: Fleet Manager - Locations
         And I select row #1 from the Locations table
         And I press the View button
         And I clicked on Service Area section
+        And I select row #1 from the Service Areas table
+        And I press the Save button
         Then the scenario Removing Service Area to a Location is successful 
 
     Scenario: Deleting Service Area

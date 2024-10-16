@@ -46,12 +46,19 @@ Feature: Fleet Manager - Supergroup
         And I press the Save button
         Then the scenario Edit Supergroup is successful
 
-    Scenario: Adding Members to a Supergroup
+    Scenario: Adding Homed Member to a Supergroup
         When I clicked on FM Supergroups menu
         And I select row #1 from the Supergroups table
         And I press the View button
         And I Add Homed Member to the Supergroup
+        Then the scenario Adding Homed Member is successful
+    
+    Scenario: Adding Visiting Member to a Supergroup
+        When I clicked on FM Supergroups menu
+        And I select row #1 from the Supergroups table
+        And I press the View button
         And I Add Visiting Member to the Supergroup
+        Then the scenario Adding Visiting Member is successful
 
     Scenario: Deleting Members from a Supergroup
         When I clicked on FM Supergroups menu
