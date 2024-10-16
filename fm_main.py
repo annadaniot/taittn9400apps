@@ -1,5 +1,4 @@
 import os
-import logging
 from time import sleep
 from behave import when, then
 from features.logger import logger
@@ -8,7 +7,6 @@ from features.steps.common import (
     confirmation_dialog_box,
     get_toast_message,
     login,
-    login_success,
     pressing_shiftey_andhold,
 )
 from features.steps.fm_common import (
@@ -35,15 +33,18 @@ def edit_create_rfss_map(context, test_case):
     fill_field(context, "#systemIdDec", form_data["System ID"])
     fill_field(context, "#rfssIdDec", form_data["RFSS ID"])
 
-    min_id = context.page.locator("#unitIdMinDec" if "Subscriber" in test_case else "#groupIdMinDec")
-    max_id = context.page.locator("#unitIdMaxDec" if "Subscriber" in test_case else "#groupIdMaxDec")
+    min_id = context.page.locator(
+        "#unitIdMinDec" if "Subscriber" in test_case else "#groupIdMinDec")
+    max_id = context.page.locator(
+        "#unitIdMaxDec" if "Subscriber" in test_case else "#groupIdMaxDec")
     min_id.fill(form_data["Minimum"])
     max_id.fill(form_data["Maximum"])
 
     fill_field(context, "#alias", form_data["Alias"])
     select_dropdown(context, "#agencyName div svg", form_data["Agency"])
     if 'Group' in test_case or 'Supergroup' in test_case:
-        toggle_checkbox(context.page.locator("#supergroup input"), form_data["Supergroup"] == "Yes")
+        toggle_checkbox(context.page.locator("#supergroup input"),
+                        form_data["Supergroup"] == "Yes")
 
 
 @when("I complete the {test_case} form")
@@ -75,13 +76,16 @@ def edit_create_groups(context, test_case):
     fill_field(context, "#emHangTime input", form_data["Emergency Hangtime"])
     fill_field(context, "#confirmedTimeout input", form_data["Timeout"])
 
-    toggle_checkbox(context.page.locator("#allowNonEmergencyCalls input"), form_data["Allow Non-Emergency"] == "Yes")
-    toggle_checkbox(context.page.locator("#allowEmergencyCalls input"), form_data["Allow Emergency"] == "Yes")
-    toggle_checkbox(context.page.locator("#allowFDMAAffiliation input"), form_data["Allow FDMA Affiliation"] == "Yes")
-    toggle_checkbox(context.page.locator("#priorityTalkgroupScan input"), form_data["Priority TG Scan"] == "Yes")
+    toggle_checkbox(context.page.locator(
+        "#allowNonEmergencyCalls input"), form_data["Allow Non-Emergency"] == "Yes")
+    toggle_checkbox(context.page.locator(
+        "#allowEmergencyCalls input"), form_data["Allow Emergency"] == "Yes")
+    toggle_checkbox(context.page.locator("#allowFDMAAffiliation input"),
+                    form_data["Allow FDMA Affiliation"] == "Yes")
+    toggle_checkbox(context.page.locator(
+        "#priorityTalkgroupScan input"), form_data["Priority TG Scan"] == "Yes")
 
     context.test_case = test_case
-    logger.info(context.test_case)
 
 
 @when("I fill in the {test_case} form")
@@ -105,7 +109,7 @@ def edit_create_subscriber(context, test_case):
     else:
         fill_field(context, "#startUnitIdDec", form_data["Start ID"])
         fill_field(context, "#endUnitIdDec", form_data["End ID"])
-    
+
     fill_field(context, "#alias", form_data["Alias"])
 
     if "Create" in test_case:
@@ -113,18 +117,22 @@ def edit_create_subscriber(context, test_case):
 
     select_dropdown(context, "#unitType div svg", form_data["Unit Type"])
     select_dropdown(context, "#priority div svg", form_data["Priority"])
-    select_dropdown(context, "#groupCallPerm div svg", form_data["Group Call Permission"])
+    select_dropdown(context, "#groupCallPerm div svg",
+                    form_data["Group Call Permission"])
     sleep(1)
 
-    select_dropdown(context, "#unitCallPerm div", form_data["Unit Call Permission"])
+    select_dropdown(context, "#unitCallPerm div",
+                    form_data["Unit Call Permission"])
     sleep(1)
 
-    select_dropdown(context, "#pstnCallPerm div svg", form_data["PSTN Call Permission"])
+    select_dropdown(context, "#pstnCallPerm div svg",
+                    form_data["PSTN Call Permission"])
     fill_field(context, "#info", form_data["Information"])
 
     unit_type_json = form_data["Unit Type"]
     if unit_type_json == "Unit":
-        toggle_checkbox(context.page.locator("#affiliateAnywhere input"), form_data["Affiliate Anywhere"] == "Yes")
+        toggle_checkbox(context.page.locator(
+            "#affiliateAnywhere input"), form_data["Affiliate Anywhere"] == "Yes")
 
 
 @then("the scenario {test_case} is successful")
@@ -132,13 +140,12 @@ def success(context, test_case):
     """"""
     # 1. Check the toast message
     # Groups/Subscribers Import do not have toast message when success
-    if "Import" not in test_case:
+    if "Import" not in test_case and 'Member' not in test_case:
         toast_message = get_toast_message(context)
         logger.info(f"toast message is: {toast_message}")
 
-        assert (
-            "OK" in toast_message or "Success" in toast_message or "Updated" in toast_message
-        ), f"Test failed: Unexpected toast message '{toast_message}'"
+        assert any(word in toast_message for word in [
+                   "OK", "Success", "Updated", "Added"]), f"Test failed: Unexpected toast message '{toast_message}'"
 
     # 2. Verify data existence
     if "Service" not in test_case:
@@ -156,7 +163,7 @@ def select_record(context, number, test_case):
     if "RFSS Map" in test_case:
         selected_row = context.page.locator(f"xpath=//tr[{number}]/td[4]/div")
         selected_row.click()
-    elif "Backup" in test_case or 'Users' in test_case or 'Supergroup' in test_case:
+    elif "Backup" in test_case or 'Users' in test_case or 'Supergroup Members' in test_case:
         selected_row = context.page.locator(f"xpath=//tr[{number}]/td[1]")
         selected_row.click()
     elif checkbox.count() > 0:
@@ -287,7 +294,7 @@ def tick_all_checkbox(context):
     context.page.locator(
         "xpath=/html/body/div[1]/div/div/div[3]/div[3]/div[2]/div/div/div[2]/table/thead/tr[2]/th[1]/div/input"
     ).click()
-    
+
     sleep(1)
 
 
@@ -310,7 +317,8 @@ def verify_backup_created(context, test_case):
     new_backup_files = get_file_names(context)
     files_count = len(new_backup_files)
 
-    assert (context.initial_count + 1) == files_count, 'Failed in backup creation'
+    assert (context.initial_count +
+            1) == files_count, 'Failed in backup creation'
 
 
 @when('I created {test_case} and added other changes to it by mistake')
@@ -386,17 +394,22 @@ def create_edit_user(context, test_case):
     fill_field(context, '#name', (form_data["Name"]))
     fill_field(context, '#password input', (form_data["Password"]))
     context.page.locator("#password_panel").click()
-    fill_field(context, '#confirm-password  input', (form_data["Confirm Password"]))
+    fill_field(context, '#confirm-password  input',
+               (form_data["Confirm Password"]))
     context.page.locator("#confirm-password_panel").click()
     fill_field(context, '#comment', (form_data["Comment"]))
 
-    if form_data["Disabled"] == "Yes": 
-        toggle_checkbox(context.page.locator("#disabled input"), form_data["Disabled"] == "Yes")
+    if form_data["Disabled"] == "Yes":
+        toggle_checkbox(context.page.locator("#disabled input"),
+                        form_data["Disabled"] == "Yes")
     else:
         if 'Console' not in test_case:
-            toggle_checkbox(context.page.locator("#admin input"), form_data["Fleet Administrator"] == "Yes")
+            toggle_checkbox(context.page.locator("#admin input"),
+                            form_data["Fleet Administrator"] == "Yes")
         else:
-            select_dropdown(context, '#pv_id_47 div', form_data["Default"])
+            # select_dropdown(context, '#pv_id_47 div', form_data["Default"])
+            context.page.get_by_label("None").click()
+            context.page.get_by_text(form_data["Default"]).click()
 
 
 @when('I login using the new credential')
@@ -410,7 +423,8 @@ def new_credential_login(context):
 def newc_login_success(context):
 
     form_data = load_json_data(context, 'Create User')
-    user_in_webui = context.page.locator('//*[@id="app"]/div/div/div[2]/div/div[1]/a[1]').inner_text()
+    user_in_webui = context.page.locator(
+        '//*[@id="app"]/div/div/div[2]/div/div[1]/a[1]').inner_text()
 
     assert form_data['Name'] == user_in_webui, 'Login with new credential is not successful'
 
@@ -432,16 +446,20 @@ def create_edit_supergroup(context, test_case):
 def add_members_supergroup(context, test_case):
 
     button_click(context, test_case)
+    context.member = None
 
     if 'Visiting' in test_case:
+        context.member = context.page.locator(
+            f"xpath=//tr[1]/td[2]/div").nth(1).inner_text()
         context.page.locator(f"xpath=//tr[1]/td[2]/div").nth(1).click()
     else:
+        context.member = context.page.locator(
+            f"xpath=//tr[1]/td[2]/div").inner_text()
         context.page.locator(f"xpath=//tr[1]/td[2]/div").click()
 
     button_click(context, "Add")
-
-    close_button = context.page.locator('div.p-dialog-header button')
-    close_button.click()
+    x_button = context.page.locator('div.p-dialog-header button')
+    x_button.click()
 
 
 @when('I fill-out the {test_case} form')
@@ -461,12 +479,17 @@ def create_edit_dac_profile(context, test_case):
 
     fill_field(context, '#dacgrpName', form_data["Name"])
     fill_field(context, '#dacId input', form_data["DAC Group ID"])
-    select_dropdown(context, '#otarProtocol span', form_data["OTAR Transport Protocol"])
+    select_dropdown(context, '#otarProtocol span',
+                    form_data["OTAR Transport Protocol"])
     fill_field(context, '#otarPortNumber input', form_data["OTAR Port Number"])
-    toggle_checkbox(context.page.locator("#encrypt input"), form_data["Encrypted"] == "Yes")
-    select_dropdown(context, '#locationDataProtocol span', form_data["Location Data Transport Protocol"])
-    fill_field(context, '#locationDataPortNumber input', form_data["Location Data Port Number"])
-    select_dropdown(context, '#otapProtocol span', form_data["OTAP Transport Protocol"])
+    toggle_checkbox(context.page.locator("#encrypt input"),
+                    form_data["Encrypted"] == "Yes")
+    select_dropdown(context, '#locationDataProtocol span',
+                    form_data["Location Data Transport Protocol"])
+    fill_field(context, '#locationDataPortNumber input',
+               form_data["Location Data Port Number"])
+    select_dropdown(context, '#otapProtocol span',
+                    form_data["OTAP Transport Protocol"])
     fill_field(context, '#otapPortNumber input', form_data["OTAP Port Number"])
 
 
