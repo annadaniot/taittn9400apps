@@ -87,12 +87,12 @@ def load_testcase_json(context, test_case):
     logger.info(f"testcase in load_jsonFile: {test_case}")
 
     file_mapping = {
-    "Supergroup": "supergroup.json",
-    "Subscriber": "subscribers.json",
-    "User": "users.json",
-    "DAC Group": "areas_dac.json",
-    "Group": "groups.json",
-    "Service": "areas_dac.json"
+        "Supergroup": "supergroup.json",
+        "Subscriber": "subscribers.json",
+        "User": "users.json",
+        "DAC Group": "areas_dac.json",
+        "Group": "groups.json",
+        "Service": "areas_dac.json"
     }
 
     for key, file_name in file_mapping.items():
@@ -148,7 +148,6 @@ def find_search_key(context, test_case):
         return str(context.max_1stgroup)
 
     elif "Delet" in context.scenario.name:
-        logger.info(f"context.value: {context.value}")
         return context.value
 
     elif "Upload" in test_case:
@@ -158,47 +157,48 @@ def find_search_key(context, test_case):
         else:
             # one of the  SUID in the file
             return "70006"
+    elif "Member" in test_case:
+        return context.member
 
     else:
         form_data = load_json_data(context, test_case)
 
-    key_map = {
-        "Import": "Start ID",
-        "RFSS Map": "Maximum",
-        "Supergroup": "Alias",
-        "Create Group": "Group ID",
-        "Edit Group": "Alias",
-        "Create Subscriber": "Unit ID",
-        "Edit Subscriber": "Alias",
-        "User": "Name",
-        "Service Area": "Area Name",
-        "Create DAC Group Profile": "DAC Group ID",
-        "Edit DAC Group Profile": "Name",
-        "DAC Group Map": "Alias"
-    }
+        key_map = {
+            "Import": "Start ID",
+            "RFSS Map": "Maximum",
+            "Supergroup": "Alias",
+            "Create Group": "Group ID",
+            "Edit Group": "Alias",
+            "Create Subscriber": "Unit ID",
+            "Edit Subscriber": "Alias",
+            "User": "Name",
+            "Service Area": "Area Name",
+            "Create DAC Group Profile": "DAC Group ID",
+            "Edit DAC Group Profile": "Name",
+            "DAC Group Map": "Alias"
 
-    data_key = None
-    for key in key_map:
-        logger.info(f'{key}, {data_key}')
-        if key in test_case:
-            data_key = key_map[key]
-            break
+        }
 
-    if data_key:
-        return form_data.get(data_key)
+        data_key = None
+        for key in key_map:
+            logger.info(f'{key}, {data_key}')
+            if key in test_case:
+                data_key = key_map[key]
+                break
+
+        if data_key:
+            return form_data.get(data_key)
 
 
 def get_file_names(context):
 
     table = context.page.query_selector("table.p-datatable-table")
-
     rows = table.query_selector_all("tr")
-
     backup_files = []
 
     for row in rows:
         first_td = row.query_selector('td:first-child')
-        if first_td:  # Ensure there is a <td> element in the row
+        if first_td:
             backup_files.append(first_td.text_content().strip())
 
     return backup_files
@@ -230,11 +230,12 @@ def click_save_button(context):
 
     for save_button in save_buttons:
         try:
-            save_button.wait_for(state='visible', timeout=1000)  
+            save_button.wait_for(state='visible', timeout=1000)
             save_button.click()
-            break  
+            break
         except TimeoutError:
             continue
 
     else:
-        raise Exception("No 'Save' button was clickable after trying all available options.")
+        raise Exception(
+            "No 'Save' button was clickable after trying all available options.")
