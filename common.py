@@ -49,7 +49,8 @@ def login(context, user, passw):
 @then("Login is successful")
 def login_success(context):
     page: Page = context.page
-    expect(page.get_by_text("WARNING! THIS SYSTEM IS RESTRICTED TO AUTHORIZED USERS ONLY!")).not_to_be_visible()
+    expect(page.get_by_text(
+        "WARNING! THIS SYSTEM IS RESTRICTED TO AUTHORIZED USERS ONLY!")).not_to_be_visible()
 
 
 @given("I clicked the logout button")
@@ -98,5 +99,4 @@ def get_toast_message(context):
     sleep(1)
 
     toast_message = toast_message_locator.text_content()
-
     return toast_message
