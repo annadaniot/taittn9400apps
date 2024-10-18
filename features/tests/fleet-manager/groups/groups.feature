@@ -25,7 +25,7 @@ Feature: Fleet Manager - Groups
         When I select row #1 from the Groups table
         And I press the View button
         And I clicked on Group Location Permissions section
-        And I select row #2 from the Group Location Permissions table
+        And I select row #1 from the Group Location Permissions table
         Then the Group is restricted to that location
 
     Scenario: Deleting Group

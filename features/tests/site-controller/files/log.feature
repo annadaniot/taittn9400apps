@@ -1,21 +1,21 @@
-@WebUI @RFSS-Controller
-Feature: RFSS Controller Logs
-  RFSS Controller Logs Test Scenarios
+@WebUI @Site-Controller
+Feature: Site Controller Logs
+  Site Controller Logs Test Scenarios
 
-  Background: Logging and go to logs page on RFSS Controller
-    Given I opened the 'RFSS Controller'
+  Background: Logging and go to logs page on Site Controller
+    Given I opened the 'Site Controller'
     And I logged in as User: 'taitnet', Password: 'tait'
     When I select 'Logs' from 'Files' on navbar
     Then I am in the 'logs-files' page
 
 
-  Scenario: RFSS Controller Download log file
+  Scenario: Site Controller Download log file
     Given There is at less '2' rows in the table
     When I press the name of the first row on RC
     Then The first file is get downloaded from RC
 
 
-  Scenario Outline: Sort RFSS Controller logs table with column <column>
+  Scenario Outline: Sort Site Controller logs table with column <column>
     Given There is at less '2' rows in the table
     When I sort the table with '<column>' in ASC
     Then The '<column_type>' under the '<column>' is in 'ASC' order
@@ -29,7 +29,7 @@ Feature: RFSS Controller Logs
       | Size (bytes)  | number      |
 
 
-  Scenario Outline: Filter RFSS Controller logs table
+  Scenario Outline: Filter Site Controller logs table
     Given There is at less '2' rows in the table
     When I input '<filter>' to the filter box
     Then All displayed rows contain '<filter>'

@@ -1,9 +1,9 @@
-@WebUI @RFSS-Controller
-Feature: RFSS Controller - Password
+@WebUI @Site-Controller
+Feature: Site Controller - Password
   WebUI Testing for Change Password page
 
-  Background: Logging and go to change password page on RFSS Controller
-    Given I opened the 'RFSS Controller'
+  Background: Logging and go to change password page on Site Controller
+    Given I opened the 'Site Controller'
     And I logged in as User: 'taitnet', Password: 'tait'
     When I select 'Password' from 'Credentials' on navbar
     Then I am in the 'change-password' page

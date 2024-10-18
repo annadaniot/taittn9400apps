@@ -25,7 +25,7 @@ Feature: Fleet Manager - Subscriber
         When I select row #1 from the Subscribers table
         And I press the View button
         And I clicked on Subscriber Location Permissions section
-        And I select row #2 from the Subscriber Location Permissions table
+        And I select row #1 from the Subscriber Location Permissions table
         And I press the Save button
         Then the Subscriber is restricted to that location
 

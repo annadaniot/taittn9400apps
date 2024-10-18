@@ -8,7 +8,7 @@ from features.steps.controller_common import CONSTANTS, wait_for_rows_to_loaded
 # ***********************************************************
 # *                        Constants                        *
 # ***********************************************************
-TEMPDIR = Path(__file__).parent.parent.parent.joinpath("temp").joinpath("rfss-controller")
+TEMPDIR = Path(__file__).parent.parent.parent.joinpath("temp").joinpath("site-controller")
 
 
 # ***********************************************************
@@ -30,12 +30,12 @@ def wait_until_page_loaded(page: Page):
 # ***********************************************************
 # *                          Steps                          *
 # ***********************************************************
-@when("I press the name of the newest RC backup")
+@when("I press the name of the newest SC backup")
 def click_on_the_name_of_a_row(context):
     page: Page = context.page
     assert context.newest_backup_before_test
 
-    logger.info(f"Downloading RC backup: {context.newest_backup_before_test}")
+    logger.info(f"Downloading SC backup: {context.newest_backup_before_test}")
     with page.expect_download() as download_info:
         page.get_by_text(context.newest_backup_before_test, exact=True).click()
     download = download_info.value
@@ -45,14 +45,14 @@ def click_on_the_name_of_a_row(context):
     download.save_as(download_path)
 
 
-@then("The newest RC backup is get downloaded")
+@then("The newest SC backup is get downloaded")
 def check_newest_backup_is_downloaded(context):
     assert context.newest_backup_before_test
     download_backup = TEMPDIR.joinpath(CONSTANTS.DOWNLOAD_BACKUP_NAME)
     assert download_backup.is_file()
 
 
-@when("I upload a RC backup file")
+@when("I upload a SC backup file")
 def upload_file(context):
     page: Page = context.page
     upload_backup = TEMPDIR.joinpath(CONSTANTS.DOWNLOAD_BACKUP_NAME)
@@ -60,7 +60,7 @@ def upload_file(context):
     page.set_input_files("input[type='file']", upload_backup)
 
 
-@when("I press the name of the first row on RC")
+@when("I press the name of the first row on SC")
 def click_on_the_name_of_first_row(context):
     page: Page = context.page
     rows = wait_for_rows_to_loaded(page)
@@ -77,7 +77,7 @@ def click_on_the_name_of_first_row(context):
     context.download_file_name = file_name
 
 
-@then("The first file is get downloaded from RC")
+@then("The first file is get downloaded from SC")
 def check_the_file_is_downloaded(context):
     assert context.download_file_name
     download_backup = TEMPDIR.joinpath(CONSTANTS.DOWNLOAD_BACKUP_NAME)

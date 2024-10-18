@@ -1,10 +1,10 @@
-@WebUI @RFSS-Controller
-@tait_p25rc.db
-Feature: RFSS Controller High Availability
-  RFSS Controller High Availability Test Scenarios
+@WebUI @Site-Controller
+@tait_p25sc.db
+Feature: Site Controller High Availability
+  Site Controller High Availability Test Scenarios
 
-  Background: Opening the RFSS Controller
-    Given I opened the 'RFSS Controller'
+  Background: Opening the Site Controller
+    Given I opened the 'Site Controller'
     And I logged in as User: 'taitnet', Password: 'tait'
     When I select 'High Availability' from 'Server' on navbar
     Then I am in the 'ha-settings' page
@@ -15,19 +15,16 @@ Feature: RFSS Controller High Availability
     And I fill the '<type>' field '<field_name>' with '<value>' under '<section>'
     When I press the button with 'Save' label
     And I press the button with 'Yes' label
-    Then I got a toast show 'Update failed'
+    Then I got a toast show 'Error'
 
     Examples:
-      | field_name            | value | type   | section                 |
-      | Priority              | -1    | number | General                 |
-      | Priority              | 0     | number | General                 |
-      | Priority              | 21    | number | General                 |
-      | Wait For Peer Timeout | -1    | number | General                 |
-      | Wait For Peer Timeout | 0     | number | General                 |
-      | Wait For Peer Timeout | 31    | number | General                 |
-      | Transfer Rate         | -1    | number | Data Replication (DRBD) |
-      | Transfer Rate         | 0     | number | Data Replication (DRBD) |
-      | Transfer Rate         | 1001  | number | Data Replication (DRBD) |
+      | field_name            | value | type   | section |
+      | Priority              | -1    | number | General |
+      | Priority              | 0     | number | General |
+      | Priority              | 21    | number | General |
+      | Wait For Peer Timeout | -1    | number | General |
+      | Wait For Peer Timeout | 0     | number | General |
+      | Wait For Peer Timeout | 31    | number | General |
 
 
   Scenario Outline: Fill the High Availability with Invalid IP Scenario
@@ -51,8 +48,7 @@ Feature: RFSS Controller High Availability
     And I fill the 'number' field 'Priority' with '2' under 'General'
     And I fill the 'number' field 'Wait For Peer Timeout' with '10' under 'General'
     And I fill the 'text' field 'Network check A' with '10.214.191.201' under 'General'
-    And I fill the 'text' field 'Network check B' with '10.214.191.202' under 'General'
-    And I fill the 'number' field 'Transfer Rate' with '500' under 'Data Replication (DRBD)'
+    And I fill the 'text' field 'Network check B' with '10.214.191.204' under 'General'
     When I press the button with 'Save' label
     And I press the button with 'No' label
     Then I am in the 'ha-settings\/edit' page
@@ -64,8 +60,6 @@ Feature: RFSS Controller High Availability
     And I fill the 'number' field 'Wait For Peer Timeout' with '10' under 'General'
     And I fill the 'text' field 'Network check A' with '10.214.191.201' under 'General'
     And I fill the 'text' field 'Network check B' with '10.214.191.202' under 'General'
-    And I fill the 'number' field 'Transfer Rate' with '500' under 'Data Replication (DRBD)'
     When I press the button with 'Save' label
     And I press the button with 'Yes' label
     Then I am in the 'ha-settings' page
-    And I got a toast show 'Updated'

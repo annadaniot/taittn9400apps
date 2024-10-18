@@ -18,6 +18,7 @@ class CustomFormatter(logging.Formatter):
 def setup_logger(log_file_path='Tests.log'):
     logger = logging.getLogger('Scenario_logger')
     logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
 
     formatter = CustomFormatter('%(asctime)s | %(levelname)-8s | %(info)s | %(message)s')
     file_handler = logging.FileHandler(log_file_path, mode='w')

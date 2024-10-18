@@ -1,49 +1,16 @@
 from pathlib import Path
 import sys
 from playwright.sync_api import sync_playwright
-from features.logger import logger
 import os
 import re
-import paramiko
-from scp import SCPClient
-from util.constants import TaitFileName, RemoteFilePath
+
+from util.constants import TaitFileName, RemoteFilePath, get_sql_file_path_by_tag
+from util.ssh import copy_remote_to_local, copy_local_to_remote, run_command_over_ssh
+from features.logger import logger
 
 TEMPDIR = Path(__file__).parent.parent.joinpath("temp")
 DATA_DIR = Path(__file__).parent.joinpath("steps").joinpath("data")
-
-
-def create_ssh_client(ip, username="taitnet", password="tait", port=22):
-    client = paramiko.SSHClient()
-    client.load_system_host_keys()
-    client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    client.connect(ip, port=port, username=username, password=password)
-    return client
-
-
-def copy_local_to_remote(source, destination, ip):
-    try:
-        ssh = create_ssh_client(ip)
-        with SCPClient(ssh.get_transport()) as scp:
-            scp.put(source, destination)
-            logger.debug(f"Transfer {source} to {destination} success.")
-        ssh.close()
-    except Exception as e:
-        logger.error(f"Error: {e}")
-        raise e
-
-
-def copy_remote_to_local(source, destination, ip):
-    try:
-        ssh = create_ssh_client(ip)
-        logger.info(source)
-        logger.info(destination)
-        with SCPClient(ssh.get_transport()) as scp:
-            scp.get(source, destination)
-            logger.debug(f"Transfer {source} to {destination} success.")
-        ssh.close()
-    except Exception as e:
-        logger.error(f"Error: {e}")
-        raise e
+RM_BASE_CMD = "/usr/local/sbin/taitnet-p25rfss-mysql -c /home/taitnet/p25rc/config/secrets/.my.cnf -g _root"
 
 
 def sanitize_filename(filename):
@@ -69,7 +36,8 @@ def before_feature(context, feature):
     logger.info('')
     logger.info('')
     if "RFSS-Controller" in feature.tags:
-        if context.config.userdata.get("rfss_ip", None) is None:
+        ip = context.config.userdata.get("rfss_ip", None)
+        if ip is None:
             logger.error("RFSS-Controller UI test require 'rfss_ip' defined, exits")
             sys.exit()
         backup_dir = TEMPDIR.joinpath("rfss-controller").joinpath("backup")
@@ -77,24 +45,47 @@ def before_feature(context, feature):
         data_dir = DATA_DIR.joinpath("rfss-controller")
         if TaitFileName.AUTH_DB in feature.tags:
             logger.info(f"================ Backup {TaitFileName.AUTH_DB} ================")
-            # Backup existing
-            copy_remote_to_local(RemoteFilePath.AUTH_DB_PATH,
-                                 backup_dir,
-                                 context.config.userdata.get("rfss_ip"))
-            # Install test_version
-            copy_local_to_remote(data_dir.joinpath(TaitFileName.AUTH_DB),
-                                 RemoteFilePath.AUTH_DB_PATH,
-                                 context.config.userdata.get("rfss_ip"))
+            copy_remote_to_local(RemoteFilePath.AUTH_DB_PATH, backup_dir, ip)
+            copy_local_to_remote(data_dir.joinpath(TaitFileName.AUTH_DB), RemoteFilePath.AUTH_DB_PATH, ip)
         if TaitFileName.P25RC_DB in feature.tags:
             logger.info(f"================ Backup {TaitFileName.P25RC_DB} ================")
-            # Backup existing
-            copy_remote_to_local(RemoteFilePath.P25RC_DB_PATH,
-                                 backup_dir,
-                                 context.config.userdata.get("rfss_ip"))
-            # Install test_version
-            copy_local_to_remote(data_dir.joinpath(TaitFileName.P25RC_DB),
-                                 RemoteFilePath.P25RC_DB_PATH,
-                                 context.config.userdata.get("rfss_ip"))
+            copy_remote_to_local(RemoteFilePath.P25RC_DB_PATH, backup_dir, ip)
+            copy_local_to_remote(data_dir.joinpath(TaitFileName.P25RC_DB), RemoteFilePath.P25RC_DB_PATH, ip)
+
+    elif "RFSS-Manager" in feature.tags:
+        ip = context.config.userdata.get("rfss_ip", None)
+        if ip is None:
+            logger.error("RFSS-Controller UI test require 'rfss_ip' defined, exits")
+            sys.exit()
+        backup_dir = TEMPDIR.joinpath("rfss-manager").joinpath("backup")
+        backup_dir.mkdir(parents=True, exist_ok=True)
+        data_dir = DATA_DIR.joinpath("rfss-manager")
+
+        if TaitFileName.CONFIGURE_DB in feature.tags:
+            logger.info(f"================ Backup {TaitFileName.CONFIGURE_DB} ================")
+            run_command_over_ssh(ip, f"{RM_BASE_CMD} -f /tmp/{TaitFileName.BACKUP_CONFIGURE_DB} backup configure")
+            copy_remote_to_local(f"/tmp/{TaitFileName.BACKUP_CONFIGURE_DB}", backup_dir, ip)
+            copy_local_to_remote(data_dir.joinpath(get_sql_file_path_by_tag(feature.tags)), "/tmp", ip)
+            run_command_over_ssh(ip,
+                                 f"{RM_BASE_CMD} -f /tmp/{get_sql_file_path_by_tag(feature.tags)} restore configure")
+
+    elif "Site-Controller" in feature.tags:
+        ip = context.config.userdata.get("site_ip", None)
+        if ip is None:
+            logger.error("Site-Controller UI test require 'site_ip' defined, exits")
+            sys.exit()
+        backup_dir = TEMPDIR.joinpath("site-controller").joinpath("backup")
+        backup_dir.mkdir(parents=True, exist_ok=True)
+        data_dir = DATA_DIR.joinpath("site-controller")
+        if TaitFileName.AUTH_DB in feature.tags:
+            logger.info(f"================ Backup {TaitFileName.AUTH_DB} ================")
+            copy_remote_to_local(RemoteFilePath.AUTH_DB_PATH, backup_dir, ip)
+            copy_local_to_remote(data_dir.joinpath(TaitFileName.AUTH_DB), RemoteFilePath.AUTH_DB_PATH, ip)
+        if TaitFileName.P25SC_DB in feature.tags:
+            logger.info(f"================ Backup {TaitFileName.P25SC_DB} ================")
+            copy_remote_to_local(RemoteFilePath.P25SC_DB_PATH, backup_dir, ip)
+            copy_local_to_remote(data_dir.joinpath(TaitFileName.P25SC_DB), RemoteFilePath.P25SC_DB_PATH, ip)
+
     logger.info(f"================ Starting Feature: {feature.name} ================")
 
 
@@ -124,16 +115,31 @@ def after_feature(context, feature):
     logger.info(f"================ Ending Feature: {feature.name} ================")
     if "RFSS-Controller" in feature.tags:
         backup_dir = TEMPDIR.joinpath("rfss-controller").joinpath("backup")
+        ip = context.config.userdata.get("rfss_ip")
         if TaitFileName.AUTH_DB in feature.tags:
             logger.info(f"================ Restore {TaitFileName.P25RC_DB} ================")
-            copy_local_to_remote(backup_dir.joinpath(TaitFileName.AUTH_DB),
-                                 RemoteFilePath.AUTH_DB_PATH,
-                                 context.config.userdata.get("rfss_ip"))
+            copy_local_to_remote(backup_dir.joinpath(TaitFileName.AUTH_DB), RemoteFilePath.AUTH_DB_PATH, ip)
         if TaitFileName.P25RC_DB in feature.tags:
             logger.info(f"================ Restore {TaitFileName.P25RC_DB} ================")
-            copy_local_to_remote(backup_dir.joinpath(TaitFileName.P25RC_DB),
-                                 RemoteFilePath.P25RC_DB_PATH,
-                                 context.config.userdata.get("rfss_ip"))
+            copy_local_to_remote(backup_dir.joinpath(TaitFileName.P25RC_DB), RemoteFilePath.P25RC_DB_PATH, ip)
+
+    elif "RFSS-Manager" in feature.tags:
+        backup_dir = TEMPDIR.joinpath("rfss-manager").joinpath("backup")
+        ip = context.config.userdata.get("rfss_ip")
+        if TaitFileName.CONFIGURE_DB in feature.tags:
+            logger.info(f"================ Restore {TaitFileName.P25RC_DB} ================")
+            copy_local_to_remote(backup_dir.joinpath(TaitFileName.BACKUP_CONFIGURE_DB), "/tmp", ip)
+            run_command_over_ssh(ip, f"{RM_BASE_CMD} -f /tmp/{TaitFileName.BACKUP_CONFIGURE_DB} restore configure")
+
+    elif "Site-Controller" in feature.tags:
+        backup_dir = TEMPDIR.joinpath("site-controller").joinpath("backup")
+        ip = context.config.userdata.get("site_ip")
+        if TaitFileName.AUTH_DB in feature.tags:
+            logger.info(f"================ Restore {TaitFileName.P25SC_DB} ================")
+            copy_local_to_remote(backup_dir.joinpath(TaitFileName.AUTH_DB), RemoteFilePath.AUTH_DB_PATH, ip)
+        if TaitFileName.P25SC_DB in feature.tags:
+            logger.info(f"================ Restore {TaitFileName.P25SC_DB} ================")
+            copy_local_to_remote(backup_dir.joinpath(TaitFileName.P25SC_DB), RemoteFilePath.P25SC_DB_PATH, ip)
 
 
 def after_all(context):
