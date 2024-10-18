@@ -46,9 +46,11 @@ def open_webui_app(context, app_name):
 
 @when("I logged in with the credential User: {user}, Password: {passw}")
 def login(context, user, passw):
+    sleep(1)
     context.page.locator('input[type="text"]').fill(user)
     context.page.locator('input[type="password"]').fill(passw)
     context.page.get_by_role("button", name="Login").click()
+
 
 
 @then("Login is successful")
