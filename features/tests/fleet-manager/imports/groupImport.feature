@@ -7,6 +7,13 @@ Feature: Fleet Manager - Imports
         When I logged in with the credential User: taitnet, Password: tait
         And I clicked on FM Groups Import menu
     
+    Scenario: Creating Announcement Group
+        When I clicked on FM Groups menu
+        And I press the Create button
+        And I complete the Create Announcement Group form
+        And I press the Save button
+        Then the scenario Create Announcement Group is successful
+            
     Scenario: Creating Groups Import
         When I press the Create button
         And I complete the Create Groups Import form

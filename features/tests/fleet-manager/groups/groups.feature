@@ -25,7 +25,7 @@ Feature: Fleet Manager - Groups
         When I select row #1 from the Groups table
         And I press the View button
         And I clicked on Group Location Permissions section
-        And I select row #1 from the Group Location Permissions table
+        And I select row #2 from the Group Location Permissions table
         Then the Group is restricted to that location
 
     Scenario: Deleting Group
@@ -44,7 +44,7 @@ Feature: Fleet Manager - Groups
         Then the scenario Create Groups Import is successful
 
     Scenario: Deleting Multiple Groups
-        When I select the data from row #1 to #4 in the Groups table
+        When I select the data from row #2 to #5 in the Groups table
         And I press the Delete Many button
         And I choose Yes on the dialog box
         Then deleting that Groups is successful

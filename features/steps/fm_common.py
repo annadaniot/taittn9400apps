@@ -84,7 +84,6 @@ def navigating_pages(context, submenu):
 
 def load_testcase_json(context, test_case):
     """"""
-    logger.info(f"testcase in load_jsonFile: {test_case}")
 
     file_mapping = {
         "Supergroup": "supergroup.json",
@@ -115,7 +114,6 @@ def verify_data_exist(context, test_case):
         button_click(context, "Back")
 
     search_key = find_search_key(context, test_case)
-    logger.info(f"searchKey: {search_key}")
     sleep(1)
 
     table = context.page.query_selector("table.p-datatable-table")
@@ -130,7 +128,6 @@ def verify_data_exist(context, test_case):
         cells = row.query_selector_all("td")
         for cell in cells:
             cell_text = cell.inner_text().strip()
-            logger.info(cell_text)
             if search_key in cell_text:
                 logger.info(f"Found! The {search_key} data is in the table.")
                 found = True
@@ -141,8 +138,6 @@ def verify_data_exist(context, test_case):
 
 
 def find_search_key(context, test_case):
-
-    logger.info(f"in searchkey, testcase is {test_case}")
 
     if "Split" in context.scenario.name:
         return str(context.max_1stgroup)
@@ -168,13 +163,13 @@ def find_search_key(context, test_case):
             "RFSS Map": "Maximum",
             "Supergroup": "Alias",
             "Create Group": "Group ID",
+            "Create Announcement Group": "Group ID",
             "Edit Group": "Alias",
             "Create Subscriber": "Unit ID",
             "Edit Subscriber": "Alias",
             "User": "Name",
             "Service Area": "Area Name",
-            "Create DAC Group Profile": "DAC Group ID",
-            "Edit DAC Group Profile": "Name",
+            "DAC Group Profile": "Name",
             "DAC Group Map": "Alias"
 
         }

@@ -86,7 +86,7 @@ Feature: RFSS Manager - RFSS External Devices
     Then I am in the 'configure/external-devices/4' page
 
 
-  Scenario: Edit a External Devices use button under detail page with vaild data
+  Scenario: Edit a External Devices use button under detail page with valid data
     Given There is '6' rows in the table
     When I click on the text in row '2' and column 'Name'
     Then I am in the 'configure/external-devices-status/4' page
@@ -103,14 +103,14 @@ Feature: RFSS Manager - RFSS External Devices
     And I choose 'None' option from the 'External Device Vocoder Mode Capability' dropdown under 'Identity' section
     And I press the button with 'Save' label
     Then I am in the 'configure/external-devices-status/4' page
-    And I can see the 'Name' is 'Edited-ED' under 'Identity' on the form
-    And I can see the 'Type' is 'Voice Recorder' under 'Identity' on the form
-    And I can see the 'WACN ID' is 'a4399' under 'Identity' on the form
-    And I can see the 'System ID' is '2cc' under 'Identity' on the form
-    And I can see the 'RFSS ID' is '1' under 'Identity' on the form
-    And I can see the 'Use 4 Hex Digit RFSS ID' is 'Yes' under 'Identity' on the form
-    And I can see the 'IP Address' is '127.0.0.9' under 'Identity' on the form
-    And I can see the 'Vocoder mode capability' is 'None' under 'Identity' on the form
+    And I can see the 'Name' is 'Edited-ED' under 'Identity'
+    And I can see the 'Type' is 'Voice Recorder' under 'Identity'
+    And I can see the 'WACN ID' is 'a4399' under 'Identity'
+    And I can see the 'System ID' is '2cc' under 'Identity'
+    And I can see the 'RFSS ID' is '1' under 'Identity'
+    And I can see the 'Use 4 Hex Digit RFSS ID' is 'Yes' under 'Identity'
+    And I can see the 'IP Address' is '127.0.0.9' under 'Identity'
+    And I can see the 'Vocoder mode capability' is 'None' under 'Identity'
 
 
   Scenario Outline: Edit a External Devices form with invalid data
@@ -123,6 +123,7 @@ Feature: RFSS Manager - RFSS External Devices
 
     Examples:
       | field_name | value  | error_msg                         |
+      | Name       |        | Empty value not allowed           |
       | Name       | spa ce | Illegal characters in input value |
       | WACN ID    | 0      | Invalid Value (1 ~ FFFFE)         |
       | WACN ID    | fffff  | Invalid Value (1 ~ FFFFE)         |

@@ -8,32 +8,32 @@ Feature: Fleet Manager - Subscriber
         And I clicked on FM Subscribers menu
 
     Scenario: Creating Subscriber
-    #     When I press the Create button
-    #     And I fill in the Create Subscriber form
-    #     And I press the Save button
-    #     Then the scenario Create Subscriber is successful
+        When I press the Create button
+        And I fill in the Create Subscriber form
+        And I press the Save button
+        Then the scenario Create Subscriber is successful
 
-    # Scenario: Editing Subscriber
-    #     When I select row #1 from the Subscribers table
-    #     And I press the View button
-    #     And I press the Edit button
-    #     And I'll do the scenario Edit Subscriber
-    #     And I press the Save button
-    #     Then the scenario Edit Subscriber is successful
+    Scenario: Editing Subscriber
+        When I select row #1 from the Subscribers table
+        And I press the View button
+        And I press the Edit button
+        And I'll do the scenario Edit Subscriber
+        And I press the Save button
+        Then the scenario Edit Subscriber is successful
 
-    # Scenario: Adding Location Restriction to a Subscriber Unit
-    #     When I select row #1 from the Subscribers table
-    #     And I press the View button
-    #     And I clicked on Subscriber Location Permissions section
-    #     And I select row #1 from the Subscriber Location Permissions table
-    #     And I press the Save button
-    #     Then the Subscriber is restricted to that location
+    Scenario: Adding Location Restriction to a Subscriber Unit
+        When I select row #1 from the Subscribers table
+        And I press the View button
+        And I clicked on Subscriber Location Permissions section
+        And I select row #2 from the Subscriber Location Permissions table
+        And I press the Save button
+        Then the Subscriber is restricted to that location
 
-    # Scenario: Deleting Subscriber
-    #     When I select row #1 from the Subscribers table
-    #     And I press the Delete button
-    #     And I choose Yes on the dialog box
-    #     Then deleting that Subscriber is successful
+    Scenario: Deleting Subscriber
+        When I select row #1 from the Subscribers table
+        And I press the Delete button
+        And I choose Yes on the dialog box
+        Then deleting that Subscriber is successful
 
     Scenario: Creating Multiple Subscribers
         When I press the Create Many button

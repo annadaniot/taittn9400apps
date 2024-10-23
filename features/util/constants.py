@@ -21,5 +21,7 @@ class RemoteFilePath:
 def get_sql_file_path_by_tag(tags):
     if "empty" in tags:
         return "empty-configure-3.32.sql"
-    elif "external-site" in tags:
-        return "external-site-3.32.sql"
+    elif "external-device" in tags:
+        return "external-device-3.32.sql"
+    elif "mobile-ip-home-agent" in tags:
+        return "mhipa-configure-3.32.sql"

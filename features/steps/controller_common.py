@@ -53,7 +53,7 @@ def select_row_from_table(context, row_num, column_name):
             column_index = i
             logger.debug(f"Index of {column_name} column is {i}")
             break
-    assert column_index >= 0
+    assert column_index >= 0, "There is no column"
 
     columns = page.locator(f"tr[data-p-index='{row_num}'] td")
     data = columns.nth(column_index).inner_text()
@@ -173,7 +173,7 @@ def button_is_disabled(context, button_name):
 @then("Row '{row_num}' has '{expect_data}' in column '{column_name}'")
 def check_data_from_table(context, row_num, expect_data, column_name):
     data = select_row_from_table(context, row_num, column_name)
-    assert data == expect_data, f"{data=} {expect_data=}"
+    assert data == expect_data, f"expect {expect_data} got {data}"
 
 
 @when("I select row '{row_num}' on the table")
@@ -194,9 +194,10 @@ def change_the_access_level(context, access_level):
 def no_sort_on_table_as_default(context):
     page: Page = context.page
     headers = page.locator("tr[role='row'][data-pc-section='root'] th")
-    assert headers.count() > 1
+    assert headers.count() > 1, f"expect at least one column got {headers.count()}"
     for i in range(1, headers.count()):
-        assert headers.nth(i).get_attribute('aria-sort') == "none"
+        sort_order = headers.nth(i).get_attribute('aria-sort')
+        assert sort_order == "none", f"expect none got {sort_order}"
 
 
 @when("I sort the table with '{column_name}' in ASC")
@@ -205,7 +206,8 @@ def sort_by_column_in_asc(context, column_name):
     header = page.get_by_role("columnheader", name=column_name, exact=True)
     if header.get_attribute('aria-sort') == "none" or header.get_attribute('aria-sort') == "descending":
         header.click()
-    assert header.get_attribute('aria-sort') == "ascending"
+    sort_order = header.get_attribute('aria-sort')
+    assert sort_order == "ascending", f"expect ascending got {sort_order}"
 
 
 @given("I sort the table with '{column_name}' in DESC")
@@ -217,7 +219,8 @@ def sort_by_column_in_desc(context, column_name):
         header.click()
     if header.get_attribute('aria-sort') == "ascending":
         header.click()
-    assert header.get_attribute('aria-sort') == "descending"
+    sort_order = header.get_attribute('aria-sort')
+    assert sort_order == "descending", f"expect descending got {sort_order}"
 
 
 @when("I input '{filter_text}' to the filter box")
@@ -235,9 +238,9 @@ def check_row_in_the_table(context, num_of_row):
     page: Page = context.page
     rows = wait_for_rows_to_loaded(page)
     if rows.nth(0).inner_text() == CONSTANTS.NO_ROWS_TO_DISPLAY:
-        assert 0 == int(num_of_row)
+        assert 0 == int(num_of_row), f"expect 0 got {num_of_row}"
     else:
-        assert rows.count() == int(num_of_row)
+        assert rows.count() == int(num_of_row), f"expect {num_of_row} got {rows.count()}"
 
 
 @given("Save the name of the newest Controller backup")
@@ -245,7 +248,7 @@ def save_the_name_of_the_newest_backup(context):
     page: Page = context.page
     page.wait_for_selector(LOCATOR.TABLE_HEADER, timeout=5000)
     rows = wait_for_rows_to_loaded(page)
-    assert rows.count() >= 1
+    assert rows.count() >= 1, f"expect at least one row got {rows.count()}"
     if rows.count() == 1 and rows.nth(0).inner_text() == CONSTANTS.NO_ROWS_TO_DISPLAY:
         context.newest_backup_before_test = ""
         logger.info("There is no backup in the table")
@@ -267,11 +270,11 @@ def seen_a_dialog_with_header(context, dialog_header):
 def there_is_a_new_controller_backup(context):
     page: Page = context.page
     rows = wait_for_rows_to_loaded(page)
-    assert rows.count() >= 1
-    assert rows.nth(0).inner_text() != CONSTANTS.NO_ROWS_TO_DISPLAY
+    assert rows.count() >= 1, f"expect at least one row got {rows.count()}"
+    assert rows.nth(0).inner_text() != CONSTANTS.NO_ROWS_TO_DISPLAY, f"There is no data in table"
     newest_backup_after_test = rows.nth(0).locator('td').nth(1).inner_text()
     logger.info(f"The newest backup after test is {context.newest_backup_before_test}")
-    assert context.newest_backup_before_test != newest_backup_after_test
+    assert context.newest_backup_before_test != newest_backup_after_test, f"There is no new backup"
 
 
 @then("The backup show up in the table")
@@ -289,13 +292,13 @@ def check_minimum_rows_in_the_table(context, num_of_row):
 
     logger.info(f"{rows.count()} row found from table")
     if num_of_row < 0:
-        assert False
+        assert False, "Invalid num_of_row"
     elif num_of_row == 0 and rows.count() == 1:
-        assert rows.nth(0).inner_text() == CONSTANTS.NO_ROWS_TO_DISPLAY
+        assert rows.nth(0).inner_text() == CONSTANTS.NO_ROWS_TO_DISPLAY, "There is data in the table"
     elif num_of_row == 1 and rows.count() == 1:
-        assert rows.nth(0).inner_text() != CONSTANTS.NO_ROWS_TO_DISPLAY
+        assert rows.nth(0).inner_text() != CONSTANTS.NO_ROWS_TO_DISPLAY, "There is no data in the table"
     else:
-        assert rows.count() >= num_of_row
+        assert rows.count() >= num_of_row, f"expect {rows.count()} >= {num_of_row}"
 
 
 @then("There is a button with '{button_name}' label")
@@ -307,14 +310,14 @@ def there_is_a_button_with_label(context, button_name):
 @then("The Controller Backup is been deleted")
 def the_backup_is_deleted(context):
     page: Page = context.page
-    assert context.newest_backup_before_test
+    assert context.newest_backup_before_test, "newest_backup_before_test not exist in context"
     # make sure the confirm dialog is closed
     page.locator("div.p-dialog").wait_for(state="hidden", timeout=5000)
 
     logger.info(f"The newest backup before test is {context.newest_backup_before_test}")
     rows = wait_for_rows_to_loaded(page)
 
-    assert rows.count() >= 1
+    assert rows.count() >= 1, f"expect at least one row got {rows.count()}"
     # if there still have backup left
     if rows.count() > 1 or rows.nth(0).inner_text() != CONSTANTS.NO_ROWS_TO_DISPLAY:
         newest_backup_after_test = rows.nth(0).locator('td').nth(1).inner_text()
@@ -341,12 +344,12 @@ def check_order_of_first_row(context, column_type, column_name, order_type):
         second_data = datetime.strptime(second_data, '%Y-%m-%d %H:%M:%S')
     logger.info(f"{fist_data=}, {second_data=}")
     if order_type == "ASC":
-        assert fist_data <= second_data
+        assert fist_data <= second_data, f"expect {fist_data} <= {second_data}"
     elif order_type == "DESC":
-        assert fist_data >= second_data
+        assert fist_data >= second_data, f"expect {fist_data} >= {second_data}"
     else:
         logger.error(f"Unknown {order_type=}")
-        assert False
+        assert False, f"Unknown {order_type=}"
 
 
 @then("All displayed rows contain '{filter}'")
@@ -355,7 +358,7 @@ def check_all_rows_contain_filter(context, filter):
     rows = wait_for_rows_to_loaded(page)
     if rows.count() > 1 or rows.nth(0).inner_text() != CONSTANTS.NO_ROWS_TO_DISPLAY:
         for i in range(rows.count()):
-            assert filter in rows.nth(i).inner_text()
+            assert filter in rows.nth(i).inner_text(), f"Row {i} not contain {filter}"
 
 
 @when("I choose '{mode}' mode from the dropdown")
@@ -369,7 +372,7 @@ def change_controller_mode(context, mode):
 def check_controller_mode(context, mode):
     page: Page = context.page
     general_section = get_form_section_by_name(page, "General")
-    assert general_section
+    assert general_section, "general section not found"
     expect(general_section.get_by_text(mode)).to_be_visible()
     if mode == "Online":
         page.wait_for_timeout(5000)
@@ -379,19 +382,19 @@ def check_controller_mode(context, mode):
 @when("I fill the '{field_type}' field '{field_name}' with '{value:String}' under '{section_name}'")
 def fill_field_with_value(context, field_type, field_name, value, section_name):
     page: Page = context.page
-    section = get_form_section_by_name(page, section_name)
     wait_until_page_loaded(page)
-    assert section
+    section = get_form_section_by_name(page, section_name)
+    assert section, f"{section_name=} not found"
     if field_type == "text":
         field = section.get_by_label(field_name, exact=True)
         field.fill(value)
     elif field_type == "number":
         field = section.get_by_role("row", name=field_name).get_by_role("spinbutton")
-        field.fill(value)
-        field.press("Enter")
+        field.fill("")
+        field.type(value)  # use type to make sure UI show error message if necessary
     else:
         logger.error(f"Invalid field type '{field_type}'")
-        assert False
+        assert False, f"Invalid {field_type=}"
 
 
 @then("I am '{action}' to press the '{button_name}' button")
@@ -399,12 +402,12 @@ def check_is_button_clickable(context, action, button_name):
     page: Page = context.page
     button = page.get_by_label(button_name, exact=True)
     if action == "able":
-        assert 'p-disabled' not in button.get_attribute('class')
+        assert 'p-disabled' not in button.get_attribute('class'), "expect 'p-disabled' not exist"
     elif action == "unable":
         logger.info(button.get_attribute('class'))
-        assert 'p-disabled' in button.get_attribute('class')
+        assert 'p-disabled' in button.get_attribute('class'), "expect 'p-disabled' exist"
     else:
-        assert False
+        assert False, f"Invalid {action=}"
 
 
 @given("There is a link to the '{app_name}' on status bar")
@@ -429,7 +432,7 @@ def press_a_link_and_expect_new_page(context, link_name):
 
 @then("I got in a new page which is '{page_name}' page")
 def show_help_page(context, page_name):
-    assert context.new_page
+    assert context.new_page, "there is no new page"
     expect(context.new_page).to_have_url(re.compile(fr".*\/{page_name}"))
 
 
@@ -471,7 +474,7 @@ def error_toast_shown(context, msg):
     page: Page = context.page
     wait_until_page_loaded(page)
     expect(page.get_by_role("alert")).to_be_visible()
-    assert msg in page.get_by_role("alert").inner_text()
+    assert msg in page.get_by_role("alert").inner_text(), f"{msg} not found on the toast"
     if msg == "Updated":
         page.wait_for_timeout(5000)
 
@@ -489,9 +492,9 @@ def check_button_exists(context, available_button):
 def check_button_not_exists(context, available_button):
     page: Page = context.page
     if available_button == "Upload":
-        assert page.locator("span").filter(has_text=available_button).nth(1).count() == 0
+        assert page.locator("span").filter(has_text=available_button).nth(1).count() == 0, f"{available_button} exist"
     else:
-        assert page.get_by_role("button", name=available_button, exact=True).count() == 0
+        assert page.get_by_role("button", name=available_button, exact=True).count() == 0, f"{available_button} exist"
 
 
 @then("I can see my '{access_level}' in the title bar")

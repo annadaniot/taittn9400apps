@@ -171,7 +171,6 @@ def select_record(context, number, test_case):
         checkbox = context.page.locator(f"//tr[{number}]/td[1]/div/input")
         checkbox.click()
         if "Service Areas-" in test_case:
-            logger.info("Service Areas-")
             click_save_button(context)
     else:
         selected_row = context.page.locator(f"xpath=//tr[{number}]/td[2]")
@@ -278,12 +277,10 @@ def upload_csv_file(context, test_case):
     if "Subscriber" in test_case:
         file_path = "features/steps/data/FleetManager_SubscribersImport_Data.csv"
 
-    logger.info(f"file_path:{file_path}")
     absolute_file_path = os.path.abspath(file_path)
     upload = context.page.locator('input[type="file"]')
 
     upload.set_input_files(absolute_file_path)
-    logger.info("Uploaded file:", absolute_file_path)
 
     sleep(2)
 
@@ -353,7 +350,6 @@ def backup_restore(context, test_case):
 def restore_status(context):
 
     text = context.page.locator(".tait-modal").inner_text()
-    logger.info(text)
 
     assert 'backup restored' in text, 'Restoring a backup is NOT succesful'
 

@@ -1,5 +1,5 @@
 @WebUI @RFSS-Manager
-@configure @external-site
+@configure @external-device
 Feature: RFSS Manager - RFSS External Sites
   Fills out the RFSS Manager External Sites page
 
@@ -61,7 +61,7 @@ Feature: RFSS Manager - RFSS External Sites
     Then I am in the 'configure/external-sites/8' page
 
 
-  Scenario: Edit a External Sites use button under detail page with vaild data
+  Scenario: Edit a External Sites use button under detail page with valid data
     Given There is '3' rows in the table
     When I click on the text in row '2' and column 'Name'
     Then I am in the 'configure/external-sites-status/8' page
@@ -121,6 +121,7 @@ Feature: RFSS Manager - RFSS External Sites
 
     Examples:
       | field_name | value  | error_msg                         |
+      | Name       |        | Empty value not allowed           |
       | Name       | spa ce | Illegal characters in input value |
       | Site ID    | 0      | Invalid Value (1 ~ FE)            |
       | Site ID    | ff     | Invalid Value (1 ~ FE)            |

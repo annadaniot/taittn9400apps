@@ -27,12 +27,15 @@ Feature: RFSS Manager - Fleet Manager Form
 
     Examples:
       | field_name | value   | type | error_msg                         |
+      | Name       |         | text | Empty value not allowed           |
       | Name       | spa ce  | text | Illegal characters in input value |
       | IP Address | random  | text | Invalid IP format                 |
       | Hostname   | spa ce  | text | Illegal characters in input value |
+      | Site ID    |         | text | Invalid Hex value                 |
       | Site ID    | 0       | text | Invalid Value (1 ~ FE)            |
       | Site ID    | FF      | text | Invalid Value (1 ~ FE)            |
       | Site ID    | not_hex | text | Invalid Hex value                 |
+      | SUID       |         | text | Invalid Hex value                 |
       | SUID       | 0       | text | Invalid Value (1 ~ FFFFFF)        |
       | SUID       | 1000000 | text | Invalid Value (1 ~ FFFFFF)        |
       | SUID       | not_hex | text | Invalid Hex value                 |

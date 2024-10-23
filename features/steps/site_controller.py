@@ -33,7 +33,7 @@ def wait_until_page_loaded(page: Page):
 @when("I press the name of the newest SC backup")
 def click_on_the_name_of_a_row(context):
     page: Page = context.page
-    assert context.newest_backup_before_test
+    assert context.newest_backup_before_test, "newest_backup_before_test not defined"
 
     logger.info(f"Downloading SC backup: {context.newest_backup_before_test}")
     with page.expect_download() as download_info:
@@ -47,9 +47,9 @@ def click_on_the_name_of_a_row(context):
 
 @then("The newest SC backup is get downloaded")
 def check_newest_backup_is_downloaded(context):
-    assert context.newest_backup_before_test
+    assert context.newest_backup_before_test, "newest_backup_before_test not defined"
     download_backup = TEMPDIR.joinpath(CONSTANTS.DOWNLOAD_BACKUP_NAME)
-    assert download_backup.is_file()
+    assert download_backup.is_file(), "download failed"
 
 
 @when("I upload a SC backup file")
@@ -79,6 +79,6 @@ def click_on_the_name_of_first_row(context):
 
 @then("The first file is get downloaded from SC")
 def check_the_file_is_downloaded(context):
-    assert context.download_file_name
+    assert context.download_file_name, "download_file_name not defined"
     download_backup = TEMPDIR.joinpath(CONSTANTS.DOWNLOAD_BACKUP_NAME)
-    assert download_backup.is_file()
+    assert download_backup.is_file(), "download failed"

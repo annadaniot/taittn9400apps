@@ -73,7 +73,7 @@ Feature: RFSS Manager - RFSS Frequency Plan
     Then I am in the 'configure/frequency-plan/4' page
 
 
-  Scenario: Edit a Frequency Plan use button under detail page with vaild data
+  Scenario: Edit a Frequency Plan use button under detail page with valid data
     Given There is '4' rows in the table
     When I click on the text in row '2' and column 'Name'
     Then I am in the 'configure/frequency-plan-status/4' page
@@ -89,13 +89,13 @@ Feature: RFSS Manager - RFSS Frequency Plan
     And I fill the 'text' field 'Channel Spacing (Hz)' with '13500' under 'Identity'
     And I press the button with 'Save' label
     Then I am in the 'configure/frequency-plan-status/4' page
-    And I can see the 'Name' is 'EDIT_FP' under 'Identity' on the form
-    And I can see the 'Frequency Plan ID' is '5' under 'Identity' on the form
-    And I can see the 'Channel Type' is 'FDMA' under 'Identity' on the form
-    And I can see the 'Base Frequency (Hz)' is '122,500,000' under 'Identity' on the form
-    And I can see the 'Transmit Offset (Hz)' is '400,000' under 'Identity' on the form
-    And I can see the 'Channel Bandwidth (Hz)' is '12,300' under 'Identity' on the form
-    And I can see the 'Channel Spacing (Hz)' is '13,500' under 'Identity' on the form
+    And I can see the 'Name' is 'EDIT_FP' under 'Identity'
+    And I can see the 'Frequency Plan ID' is '5' under 'Identity'
+    And I can see the 'Channel Type' is 'FDMA' under 'Identity'
+    And I can see the 'Base Frequency (Hz)' is '122,500,000' under 'Identity'
+    And I can see the 'Transmit Offset (Hz)' is '400,000' under 'Identity'
+    And I can see the 'Channel Bandwidth (Hz)' is '12,300' under 'Identity'
+    And I can see the 'Channel Spacing (Hz)' is '13,500' under 'Identity'
 
 
   Scenario Outline: Edit a Frequency Plan form with invalid data
@@ -108,23 +108,29 @@ Feature: RFSS Manager - RFSS Frequency Plan
 
     Examples:
       | field_name             | value       | error_msg                         |
+      | Name                   |             | Empty value not allowed           |
       | Name                   | spa ce      | Illegal characters in input value |
+      | Frequency Plan ID      |             | Invalid value                     |
       | Frequency Plan ID      | -1          | Invalid Value (1 ~ 16)            |
       | Frequency Plan ID      | 17          | Invalid Value (1 ~ 16)            |
       | Frequency Plan ID      | string      | Invalid value                     |
+      | Base Frequency (Hz)    |             | Invalid value                     |
       | Base Frequency (Hz)    | -1          | Invalid Value (1 ~ 999999999)     |
       | Base Frequency (Hz)    | 1000000000  | Invalid Value (1 ~ 999999999)     |
       | Base Frequency (Hz)    | 999999999   | Number not divisible by 5         |
       | Base Frequency (Hz)    | string      | Invalid value                     |
+      | Transmit Offset (Hz)   |             | Invalid value                     |
       | Transmit Offset (Hz)   | -4          | Invalid Value (±5 ~ ±999999995)   |
       | Transmit Offset (Hz)   | 4           | Invalid Value (±5 ~ ±999999995)   |
       | Transmit Offset (Hz)   | -1000000000 | Invalid Value (±5 ~ ±999999995)   |
       | Transmit Offset (Hz)   | 1000000000  | Invalid Value (±5 ~ ±999999995)   |
       | Transmit Offset (Hz)   | 999999      | Number not divisible by 5         |
       | Transmit Offset (Hz)   | string      | Invalid value                     |
+      | Channel Bandwidth (Hz) |             | Invalid value                     |
       | Channel Bandwidth (Hz) | 6249        | Invalid Value (6250 ~ 12500)      |
       | Channel Bandwidth (Hz) | 12501       | Invalid Value (6250 ~ 12500)      |
       | Channel Bandwidth (Hz) | string      | Invalid value                     |
+      | Channel Spacing (Hz)   |             | Invalid value                     |
       | Channel Spacing (Hz)   | 3124        | Invalid Value (3125 ~ 50000)      |
       | Channel Spacing (Hz)   | 50001       | Invalid Value (3125 ~ 50000)      |
       | Channel Spacing (Hz)   | 12503       | Number not divisible by 125       |

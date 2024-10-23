@@ -30,7 +30,7 @@ def open_webui_app(context, app_name):
 
     else:
         logger.error(f"Unknown app name: {app_name}")
-        assert False
+        assert False, f"Unknown app name: {app_name}"
 
     page.goto(url, wait_until="networkidle")
     for _ in range(5):
@@ -50,7 +50,6 @@ def login(context, user, passw):
     context.page.locator('input[type="text"]').fill(user)
     context.page.locator('input[type="password"]').fill(passw)
     context.page.get_by_role("button", name="Login").click()
-
 
 
 @then("Login is successful")

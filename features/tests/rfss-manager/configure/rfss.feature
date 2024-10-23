@@ -28,15 +28,20 @@ Feature: RFSS Manager - RFSS Form
 
     Examples:
       | field_name | value   | type | error_msg                         |
+      | Name       |         | text | Empty value not allowed           |
       | Name       | spa ce  | text | Illegal characters in input value |
       | IP Address | random  | text | Invalid IP format                 |
+      | Hostname   |         | text | Empty value not allowed           |
       | Hostname   | spa ce  | text | Illegal characters in input value |
+      | RFSS ID    |         | text | Invalid Hex value                 |
       | RFSS ID    | 0       | text | Invalid Value (1 ~ FE)            |
       | RFSS ID    | FF      | text | Invalid Value (1 ~ FE)            |
       | RFSS ID    | not_hex | text | Invalid Hex value                 |
+      | System ID  |         | text | Invalid Hex value                 |
       | System ID  | 0       | text | Invalid Value (1 ~ FFE)           |
       | System ID  | FFF     | text | Invalid Value (1 ~ FFE)           |
       | System ID  | not_hex | text | Invalid Hex value                 |
+      | WACN ID    |         | text | Invalid Hex value                 |
       | WACN ID    | 0       | text | Invalid Value (1 ~ FFFFE)         |
       | WACN ID    | FFFFF   | text | Invalid Value (1 ~ FFFFE)         |
       | WACN ID    | not_hex | text | Invalid Hex value                 |

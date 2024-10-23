@@ -65,7 +65,21 @@
         "Allow Emergency":"Yes",
         "Allow FDMA Affiliation":"Yes",
         "Priority TG Scan": "No"
+     },
+    
+     "Create Announcement Group": {
+        "Group ID": "7007",
+        "Alias": "Anouncement Group - 7007",
+        "Type": "Announcement",
+        "Membership": "Open",
+        "RF Hangtime": "2",
+        "Emergency Hangtime": "2",
+        "Timeout": "2",
+        "Priority":"6",
+        "Allow Non-Emergency": "Yes",
+        "Allow Emergency": "Yes",
+        "Allow FDMA Affiliation": "Yes",
+        "Priority TG Scan": "No"
      }
 }
 
- 

@@ -27,6 +27,7 @@ Feature: RFSS Manager - PSTN Gateway Form
 
     Examples:
       | field_name        | value   | type | error_msg                         |
+      | Name              |         | text | Empty value not allowed           |
       | Name              | spa ce  | text | Illegal characters in input value |
       | IP Address        | random  | text | Invalid IP format                 |
       | Hostname          | spa ce  | text | Illegal characters in input value |
