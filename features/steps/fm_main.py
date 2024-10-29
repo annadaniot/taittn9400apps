@@ -7,7 +7,7 @@ from features.steps.common import (
     confirmation_dialog_box,
     get_toast_message,
     login,
-    pressing_shiftey_andhold,
+    pressing_shiftkey_andhold,
 )
 from features.steps.fm_common import (
     click_save_button,
@@ -229,7 +229,7 @@ def delete_many(context, start_row, end_row, test_case):
 
     for number in range(start_row, end_row + 1):
         select_record(context, number, test_case)
-        pressing_shiftey_andhold(context)
+        pressing_shiftkey_andhold(context)
         number = +1
 
 

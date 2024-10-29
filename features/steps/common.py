@@ -88,7 +88,7 @@ def confirmation_dialog_box(context, condition):
     button_click(context, condition)
 
 
-def pressing_shiftey_andhold(context):
+def pressing_shiftkey_andhold(context):
     """
     To press the SHIFT key and holding it when selecting multiple records
     """

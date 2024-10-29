@@ -44,7 +44,7 @@ Feature: Fleet Manager - Groups
         Then the scenario Create Groups Import is successful
 
     Scenario: Deleting Multiple Groups
-        When I select the data from row #2 to #5 in the Groups table
+        When I select the data from row #1 to #4 in the Groups table
         And I press the Delete Many button
         And I choose Yes on the dialog box
         Then deleting that Groups is successful
