@@ -13,7 +13,7 @@
     
     "Create DAC Group Profile": {
         "Name": "Unencrypted",
-        "DAC Group ID": "10",
+        "DAC Group ID": "8",
         "OTAR Transport Protocol": "UDP",
         "OTAR Port Number": "64414",
         "Encrypted": "No",
@@ -25,7 +25,7 @@
     
     "Edit DAC Group Profile": {
         "Name": "Encrypted",
-        "DAC Group ID": "11",
+        "DAC Group ID": "9",
         "OTAR Transport Protocol": "UDP",
         "OTAR Port Number": "64414",
         "Encrypted": "Yes",
