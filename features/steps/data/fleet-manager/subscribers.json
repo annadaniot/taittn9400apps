@@ -23,8 +23,8 @@
         "Type": "Unit",
         "Unit Type": "SU",
         "Priority": "5",
-        "Group Call Permission": "All",
-        "Unit Call Permission": "All",
+        "Group Call Permission": "Emergency only",
+        "Unit Call Permission": "Receive only",
         "PSTN Call Permission": "All",
         "Allow Data Calls": "No",
         "Information": "SU for CI tests",
@@ -37,7 +37,7 @@
         "Unit Type": "TAG",
         "Priority": "7",
         "Group Call Permission": "All",
-        "Unit Call Permission": "All",
+        "Unit Call Permission": "Initiate only",
         "PSTN Call Permission": "All",
         "Allow Data Calls": "No",
         "Information": "SU for CI tests"
@@ -56,7 +56,72 @@
         "Allow Data Calls": "No",
         "Information": "SU for CI tests",
         "Affiliate Anywhere": "Yes"
-    }  
+    }, 
+    "Subscriber Home RFSS Map - Missing WACN": {
+       "WACN ID": "",
+       "System ID": "5",
+       "RFSS ID": "8",
+       "Minimum": "8001",
+       "Maximum": "8200",
+       "Alias": "no WACN",
+       "Agency": "Default",
+       "Supergroup": "No"
+   },
+
+   "Subscriber Home RFSS Map - Missing System ID":{
+       "WACN ID": "672664",
+       "System ID": "",
+       "RFSS ID": "8",
+       "Minimum": "8001",
+       "Maximum": "8200",
+       "Alias": "no System ID",
+       "Agency": "Default",
+       "Supergroup": "No"
+   },
+
+   "Subscriber Home RFSS Map - Missing RFSS ID":{
+       "WACN ID": "672664",
+       "System ID": "5",
+       "RFSS ID": "",
+       "Minimum": "8001",
+       "Maximum": "8200",
+       "Alias": "no RFSS ID",
+       "Agency": "Default",
+       "Supergroup": "No"
+   },
+
+   "Subscriber Home RFSS Map - Missing Minimum":{
+       "WACN ID": "672664",
+       "System ID": "5",
+       "RFSS ID": "8",
+       "Minimum": "",
+       "Maximum": "8200",
+       "Alias": "no Minimum",
+       "Agency": "Default",
+       "Supergroup": "No"
+   },
+   
+   "Subscriber Home RFSS Map - Missing Maximum":{
+       "WACN ID": "672664",
+       "System ID": "5",
+       "RFSS ID": "8",
+       "Minimum": "8001",
+       "Maximum": "",
+       "Alias": "no Maximum",
+       "Agency": "Default",
+       "Supergroup": "No"
+   },
+
+   "Subscriber Home RFSS Map - Missing Alias":{
+       "WACN ID": "672664",
+       "System ID": "5",
+       "RFSS ID": "8",
+       "Minimum": "8001",
+       "Maximum": "8200",
+       "Alias": "",
+       "Agency": "Default",
+       "Supergroup": "No"
+   }  
 }
 
  

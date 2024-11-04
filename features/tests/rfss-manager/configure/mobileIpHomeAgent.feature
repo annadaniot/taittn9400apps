@@ -1,9 +1,9 @@
 @WebUI @RFSS-Manager
 @configure @external-device
 Feature: RFSS Manager - RFSS Mobile IP Home Agents
-  Fills out the RFSS Manager Mobile IP Home Agents page
+  Test the RFSS Manager Mobile IP Home Agents page
 
-  Background: Opening the RFSS Manager
+  Background: Opening the RFSS Manager Mobile IP Home Agents page
     Given I opened the 'RFSS Manager'
     And I logged in as User: 'taitnet', Password: 'tait'
     When I select 'Packet Data' from 'Configure' on navbar

@@ -1,9 +1,9 @@
 @WebUI @RFSS-Manager
 @configure @empty
 Feature: RFSS Manager - RFSS Frequency Plan
-  Fills out the RFSS Manager Frequency Plan page
+  Test the RFSS Manager Frequency Plan page
 
-  Background: Opening the RFSS Manager
+  Background: Opening the RFSS Manager Frequency Plan page
     Given I opened the 'RFSS Manager'
     And I logged in as User: 'taitnet', Password: 'tait'
     When I select 'Frequency Plan' from 'Configure' on navbar

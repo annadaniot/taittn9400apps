@@ -33,7 +33,21 @@
         "Alias": "Supergroup-Default",
         "RF Hangtime": "5.0",
         "Priority": "6"
-    } 
+    },
+    
+    "Supergroup - GroupID Not Defined in RFSS Map": {
+        "Group ID": "7500",
+        "Alias": "Supergroup-Default",
+        "RF Hangtime": "5.0",
+        "Priority": "6"
+    }, 
+
+    "Supergroup - Missing Alias": {
+        "Group ID": "7505",
+        "Alias": "",
+        "RF Hangtime": "5.0",
+        "Priority": "6"
+    }
 }
 
  

@@ -32,3 +32,20 @@ Feature: Fleet Manager - Groups Home RFSS Map
         And I press the Delete Many button
         And I choose Yes on the dialog box
         Then deleting that Groups RFSS Maps is successful
+    
+    Scenario Outline: Creating a Group Home RFSS Map with invalid values
+        When I press the Create button
+        And I fill in the form with a <scenario> Scenario
+        And I press the Save button
+        Then the error message contains <error_msg>
+
+        Examples:
+           | scenario                               | error_msg                      |    
+           | Group Home RFSS Map - Missing WACN     | Invalid WACN ID                |
+           | Group Home RFSS Map - Missing System ID| Invalid System ID              |
+           | Group Home RFSS Map - Missing RFSS ID  | Invalid RFSS ID                |
+           | Group Home RFSS Map - Missing Minimum  | No minimum Group ID provided   |
+           | Group Home RFSS Map - Missing Maximum  | No maximum Group ID provided   |
+           | Group Home RFSS Map - Missing Alias    | No alias provided              |
+           
+           

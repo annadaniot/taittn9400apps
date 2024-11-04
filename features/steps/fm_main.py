@@ -10,6 +10,7 @@ from features.steps.common import (
     pressing_shiftkey_andhold,
 )
 from features.steps.fm_common import (
+    click_and_select,
     click_save_button,
     fill_field,
     get_file_names,
@@ -117,16 +118,9 @@ def edit_create_subscriber(context, test_case):
 
     select_dropdown(context, "#unitType div svg", form_data["Unit Type"])
     select_dropdown(context, "#priority div svg", form_data["Priority"])
-    select_dropdown(context, "#groupCallPerm div svg",
-                    form_data["Group Call Permission"])
-    sleep(1)
-
-    select_dropdown(context, "#unitCallPerm div",
-                    form_data["Unit Call Permission"])
-    sleep(1)
-
-    select_dropdown(context, "#pstnCallPerm div svg",
-                    form_data["PSTN Call Permission"])
+    click_and_select(context, "#groupCallPerm div svg", "#groupCallPerm_list", form_data["Group Call Permission"])
+    click_and_select(context, "#unitCallPerm div svg", "#unitCallPerm_list", form_data["Unit Call Permission"])
+    click_and_select(context, "#pstnCallPerm div svg", "#pstnCallPerm_list", form_data["PSTN Call Permission"])
     fill_field(context, "#info", form_data["Information"])
 
     unit_type_json = form_data["Unit Type"]
@@ -145,7 +139,7 @@ def success(context, test_case):
         logger.info(f"toast message is: {toast_message}")
 
         assert any(word in toast_message for word in [
-                   "OK", "Success", "Updated", "Added"]), f"Test failed: Unexpected toast message '{toast_message}'"
+                   "OK", "Success", "Updated", "Added", "Created"]), f"Test failed: Unexpected toast message '{toast_message}'"
 
     # 2. Verify data existence
     if "Service" not in test_case:
@@ -302,7 +296,11 @@ def create_backup(context, test_case):
         context.page.locator(f'a[href="/p25fm/backups"]')
 
     backup_files = get_file_names(context)
-    context.initial_count = len(backup_files)
+
+    if "No rows to display." in backup_files:
+        context.initial_count = 0
+    else:
+        context.initial_count = len(backup_files)
 
     button_click(context, 'Backup')
     confirmation_dialog_box(context, "OK")
@@ -314,15 +312,14 @@ def verify_backup_created(context, test_case):
     new_backup_files = get_file_names(context)
     files_count = len(new_backup_files)
 
-    assert (context.initial_count +
-            1) == files_count, 'Failed in backup creation'
+    final_count = context.initial_count + 1
+    assert final_count == files_count, 'Failed in backup creation'
 
 
 @when('I created {test_case} and added other changes to it by mistake')
 def create_data(context, test_case):
 
     if "Group" in test_case:
-        # creating groups
         navigating_pages(context, "Groups")
         button_click(context, "Create Many")
         edit_create_groups(context, "Create Groups Import")
@@ -403,7 +400,7 @@ def create_edit_user(context, test_case):
             toggle_checkbox(context.page.locator("#admin input"),
                             form_data["Fleet Administrator"] == "Yes")
         else:
-            # select_dropdown(context, '#pv_id_47 div', form_data["Default"])
+
             context.page.get_by_label("None").click()
             context.page.get_by_text(form_data["Default"]).click()
 
@@ -491,9 +488,7 @@ def create_edit_dac_profile(context, test_case):
 
 @when('I input data into the {test_case} form')
 def create_edit_dac_map(context, test_case):
-
     form_data = load_json_data(context, test_case)
-
     fill_field(context, '#wacnIdDec', form_data["WACN ID"])
     fill_field(context, '#systemIdDec', form_data["System ID"])
     fill_field(context, '#unitIdMinDec', form_data["Minumum"])
@@ -501,3 +496,24 @@ def create_edit_dac_map(context, test_case):
     select_dropdown(context, '#dacgrpName span', form_data["DAC Group Name"])
     select_dropdown(context, '#ipPool span', form_data["IP Pool"])
     fill_field(context, '#alias', form_data["Alias"])
+
+
+@when('I fill the {test_case} form with id:{id} and alias:{alias}')
+def fill_form_subscriber_group(context, test_case, id, alias):
+    id = id.strip("'")
+    alias = alias.strip("'")
+    if 'Group' in test_case:
+        context.page.locator("#groupIdDec").fill(id)
+    else:
+        context.page.locator("#unitIdDec").fill(id)
+    context.page.locator("#alias").fill(alias)
+    button_click(context, 'Save')
+
+
+@then('the error message contains {error_msg}')
+def confirm_error_message(context, error_msg):
+    error_msg = error_msg.strip("'")
+    toast_msg_locator = context.page.locator("div.p-toast-detail")
+    toast_msg = toast_msg_locator.text_content().strip()
+    assert error_msg in toast_msg, "Incorrect error message."
+

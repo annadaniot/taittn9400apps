@@ -15,7 +15,7 @@ Feature: Fleet Manager - Packet Data
 
     Scenario: Editing DAC Group Profile
         When I clicked on FM DAC Group Profiles menu
-        And I select row #1 from the DAC Group Profiles table
+        And I select row #2 from the DAC Group Profiles table
         And I press the View button
         And I press the Edit button
         And I submit the Edit DAC Group Profile form with the required details
@@ -47,7 +47,7 @@ Feature: Fleet Manager - Packet Data
     
     Scenario: Deleting DAC Group Profile
         When I clicked on FM DAC Group Profiles menu
-        And I select row #1 from the DAC Group Profile table
+        And I select row #2 from the DAC Group Profile table
         And I press the Delete button
         And I choose Yes on the dialog box
         Then deleting that DAC Group Profile is successful

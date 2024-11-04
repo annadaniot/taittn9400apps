@@ -3,6 +3,7 @@ import sys
 from playwright.sync_api import sync_playwright
 import os
 import re
+# import allure
 
 from util.constants import TaitFileName, RemoteFilePath, get_sql_file_path_by_tag
 from util.ssh import copy_remote_to_local, copy_local_to_remote, run_command_over_ssh

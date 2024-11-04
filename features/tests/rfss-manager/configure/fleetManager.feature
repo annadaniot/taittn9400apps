@@ -1,9 +1,9 @@
 @WebUI @RFSS-Manager
 @configure @empty
 Feature: RFSS Manager - Fleet Manager Form
-  Fills out the RFSS Manager Fleet Manager page
+  Test the RFSS Manager Fleet Manager page
 
-  Background: Opening the RFSS Manager
+  Background: Opening the RFSS Manager Fleet Manager page
     Given I opened the 'RFSS Manager'
     And I logged in as User: 'taitnet', Password: 'tait'
     When I select 'Fleet Manager' from 'Configure' on navbar

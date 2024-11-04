@@ -7,7 +7,6 @@ Feature: RFSS Controller - Access Level
     Given I opened the 'RFSS Controller'
     Then I am in the 'login' page
 
-
   Scenario Outline: User can see they aceess level in title bar
     Given I logged in as User: '<username>', Password: 'tait'
     Then Login is successful

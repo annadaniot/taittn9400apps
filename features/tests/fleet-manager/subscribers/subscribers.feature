@@ -25,7 +25,7 @@ Feature: Fleet Manager - Subscriber
         When I select row #1 from the Subscribers table
         And I press the View button
         And I clicked on Subscriber Location Permissions section
-        And I select row #2 from the Subscriber Location Permissions table
+        And I select row #1 from the Subscriber Location Permissions table
         And I press the Save button
         Then the Subscriber is restricted to that location
 
@@ -50,3 +50,13 @@ Feature: Fleet Manager - Subscriber
         And I choose Yes on the dialog box
         Then deleting that Subscribers is successful
 
+    Scenario Outline: Creating a Subscriber with invalid values
+        When I press the Create button
+        And I fill the Subscriber form with id:'<id>' and alias:'<alias>'
+        Then the error message contains '<error_msg>'
+
+        Examples:
+           | id     | alias            | error_msg                                 |
+           | 70001  |                  | Missing required field(s): alias          |
+           |        | empty unit ID    | Invalid Unit ID                           |
+           | 7000   | invalid unit ID  | not in any of the defined Home RFSS Maps  |

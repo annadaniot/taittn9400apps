@@ -82,6 +82,18 @@ Feature: Fleet Manager - Supergroup
         And I press the Delete Many button
         And I choose Yes on the dialog box
         Then deleting that Groups is successful
+
+    Scenario Outline: Creating a Supergroup with invalid values
+        When I clicked on FM Supergroups menu
+        And I press the Create button
+        And I complete the form with a <scenario> scenario
+        And I press the Save button
+        Then the error message contains <error_msg>
+    
+        Examples:
+           | scenario                                       | error_msg                         |
+           | Supergroup - GroupID Not Defined in RFSS Map   | Unable to find Group Home Map     |
+           | Supergroup - Missing Alias                     | Missing required field(s): alias  |
     
     Scenario: Deleting Multiple Groups Home RFSS Map
         When I clicked on FM Groups RFSS Map menu

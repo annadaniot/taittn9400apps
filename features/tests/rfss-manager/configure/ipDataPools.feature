@@ -1,9 +1,9 @@
 @WebUI @RFSS-Manager
 @configure @empty
 Feature: RFSS Manager - RFSS IP Data Pools
-  Fills out the RFSS Manager IP Data Pools page
+  Test the RFSS Manager IP Data Pools page
 
-  Background: Opening the RFSS Manager
+  Background: Opening the RFSS Manager IP Data Pools page
     Given I opened the 'RFSS Manager'
     And I logged in as User: 'taitnet', Password: 'tait'
     When I select 'Packet Data' from 'Configure' on navbar

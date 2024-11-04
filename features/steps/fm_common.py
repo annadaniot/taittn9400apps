@@ -217,13 +217,10 @@ def toggle_checkbox(checkbox, should_check):
 
 
 def click_save_button(context):
-    save_buttons = [
-        context.page.locator(".p-button-label:has-text('Save')").nth(0),
-        context.page.locator(".p-button-label:has-text('Save')").nth(1),
-        context.page.locator(".p-button-label:has-text('Save')").nth(2)
-    ]
+    save_buttons = context.page.locator(".p-button-label:has-text('Save')")
 
-    for save_button in save_buttons:
+    for i in range(save_buttons.count()):
+        save_button = save_buttons.nth(i)
         try:
             save_button.wait_for(state='visible', timeout=1000)
             save_button.click()
@@ -234,3 +231,13 @@ def click_save_button(context):
     else:
         raise Exception(
             "No 'Save' button was clickable after trying all available options.")
+
+
+def click_and_select(context, icon_selector, list_selector, option_value):
+    context.page.locator(icon_selector).wait_for(state="visible", timeout=1000)
+    context.page.locator(icon_selector).click()
+
+    context.page.locator(list_selector).wait_for(state="visible", timeout=2000)
+    item = context.page.locator(f'li[aria-label="{option_value}"]')
+    item.wait_for(state="visible", timeout=1000)
+    item.click()

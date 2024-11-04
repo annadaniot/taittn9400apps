@@ -80,6 +80,71 @@
         "Allow Emergency": "Yes",
         "Allow FDMA Affiliation": "Yes",
         "Priority TG Scan": "No"
-     }
+     }, 
+     "Group Home RFSS Map - Missing WACN": {
+        "WACN ID": "",
+        "System ID": "5",
+        "RFSS ID": "8",
+        "Minimum": "8001",
+        "Maximum": "8200",
+        "Alias": "no WACN",
+        "Agency": "Default",
+        "Supergroup": "No"
+    },
+
+    "Group Home RFSS Map - Missing System ID":{
+        "WACN ID": "672664",
+        "System ID": "",
+        "RFSS ID": "8",
+        "Minimum": "8001",
+        "Maximum": "8200",
+        "Alias": "no System ID",
+        "Agency": "Default",
+        "Supergroup": "No"
+    },
+
+    "Group Home RFSS Map - Missing RFSS ID":{
+        "WACN ID": "672664",
+        "System ID": "5",
+        "RFSS ID": "",
+        "Minimum": "8001",
+        "Maximum": "8200",
+        "Alias": "no RFSS ID",
+        "Agency": "Default",
+        "Supergroup": "No"
+    },
+
+    "Group Home RFSS Map - Missing Minimum":{
+        "WACN ID": "672664",
+        "System ID": "5",
+        "RFSS ID": "8",
+        "Minimum": "",
+        "Maximum": "8200",
+        "Alias": "no Minimum",
+        "Agency": "Default",
+        "Supergroup": "No"
+    },
+    
+    "Group Home RFSS Map - Missing Maximum":{
+        "WACN ID": "672664",
+        "System ID": "5",
+        "RFSS ID": "8",
+        "Minimum": "8001",
+        "Maximum": "",
+        "Alias": "no Maximum",
+        "Agency": "Default",
+        "Supergroup": "No"
+    },
+
+    "Group Home RFSS Map - Missing Alias":{
+        "WACN ID": "672664",
+        "System ID": "5",
+        "RFSS ID": "8",
+        "Minimum": "8001",
+        "Maximum": "8200",
+        "Alias": "",
+        "Agency": "Default",
+        "Supergroup": "No"
+    }
 }
 

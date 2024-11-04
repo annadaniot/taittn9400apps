@@ -1,9 +1,9 @@
 @WebUI @RFSS-Manager
 @configure @external-device
 Feature: RFSS Manager - RFSS External Sites
-  Fills out the RFSS Manager External Sites page
+  Test the RFSS Manager External Sites page
 
-  Background: Opening the RFSS Manager
+  Background: Opening the RFSS Manager External Sites page
     Given I opened the 'RFSS Manager'
     And I logged in as User: 'taitnet', Password: 'tait'
     When I select 'External Sites' from 'Configure' on navbar

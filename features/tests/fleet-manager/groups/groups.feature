@@ -49,4 +49,15 @@ Feature: Fleet Manager - Groups
         And I choose Yes on the dialog box
         Then deleting that Groups is successful
 
+    Scenario Outline: Creating a Group with invalid values
+        When I press the Create button
+        And I fill the Group form with id:'<id>' and alias:'<alias>'
+        Then the error message contains '<error_msg>'
+
+        Examples:
+           | id     | alias             | error_msg                                 |
+           | 7001   |                   | Missing required field(s): alias          |
+           |        | empty group ID    | Invalid Group ID                          |
+           | 700    | invalid group ID  | not in any of the defined Home RFSS Maps  |
+
 

@@ -135,10 +135,16 @@ def shown_error_dialog(context):
 
 
 @when("I select '{page_name}' from '{section_name}' on navbar")
-def go_to_password_page(context, page_name, section_name):
+def click_on_link_under_section_on_nav_bar(context, page_name, section_name):
     page: Page = context.page
-    page.locator("div").filter(has_text=re.compile(fr"^{section_name}$")).first.click()
-    page.get_by_role("link", name=page_name).click()
+    nav_bar = page.locator(".navigation_panel")
+    assert nav_bar, "nav bar not found"
+
+    section_icon = nav_bar.locator("div").filter(has_text=re.compile(fr"^{section_name}$")).first.locator("i")
+    if "pi-plus" in section_icon.get_attribute("class"):
+        section_icon.click()
+
+    nav_bar.get_by_role("link", name=page_name, exact=True).click()
 
 
 @when("I fill the Passwords page with '{old_password}', '{new_password}' and '{confirm_new_password}'")
@@ -258,6 +264,7 @@ def save_the_name_of_the_newest_backup(context):
 
 
 @when("A dialog shown '{dialog_header}' on the page")
+@then("A dialog shown '{dialog_header}' on the page")
 def seen_a_dialog_with_header(context, dialog_header):
     page: Page = context.page
     page.get_by_text(dialog_header, exact=True).wait_for(state="visible", timeout=10000)
@@ -271,10 +278,10 @@ def there_is_a_new_controller_backup(context):
     page: Page = context.page
     rows = wait_for_rows_to_loaded(page)
     assert rows.count() >= 1, f"expect at least one row got {rows.count()}"
-    assert rows.nth(0).inner_text() != CONSTANTS.NO_ROWS_TO_DISPLAY, f"There is no data in table"
+    assert rows.nth(0).inner_text() != CONSTANTS.NO_ROWS_TO_DISPLAY, "There is no data in table"
     newest_backup_after_test = rows.nth(0).locator('td').nth(1).inner_text()
     logger.info(f"The newest backup after test is {context.newest_backup_before_test}")
-    assert context.newest_backup_before_test != newest_backup_after_test, f"There is no new backup"
+    assert context.newest_backup_before_test != newest_backup_after_test, "There is no new backup"
 
 
 @then("The backup show up in the table")
@@ -290,7 +297,7 @@ def check_minimum_rows_in_the_table(context, num_of_row):
     page.wait_for_selector(LOCATOR.TABLE_HEADER, timeout=5000)
     rows = wait_for_rows_to_loaded(page)
 
-    logger.info(f"{rows.count()} row found from table")
+    logger.debug(f"{rows.count()} row found from table")
     if num_of_row < 0:
         assert False, "Invalid num_of_row"
     elif num_of_row == 0 and rows.count() == 1:
@@ -392,6 +399,7 @@ def fill_field_with_value(context, field_type, field_name, value, section_name):
         field = section.get_by_role("row", name=field_name).get_by_role("spinbutton")
         field.fill("")
         field.type(value)  # use type to make sure UI show error message if necessary
+        field.press("Enter") # use Enter to make sure UI update
     else:
         logger.error(f"Invalid field type '{field_type}'")
         assert False, f"Invalid {field_type=}"
@@ -502,3 +510,25 @@ def check_access_level_in_title_bar(context, access_level):
     page: Page = context.page
     title_bar = page.locator(".title_bar")
     expect(title_bar.get_by_role("link", name=f"({access_level})")).to_be_visible()
+
+
+@then("I can see the input field '{field_name}' with '{value:String}' under '{section_name}'")
+def check_input_field_value(context, field_name, value, section_name):
+    page: Page = context.page
+    section = get_form_section_by_name(page, section_name)
+    wait_until_page_loaded(page)
+    assert section
+
+    field = section.get_by_label(field_name, exact=True)
+    assert field.input_value() == value, f"{field.input_value()=} {value=}"
+
+
+@then("I can see the text field, id:'{field_name}' under '{section_name}' has '{value:String}'")
+def check_text_field_value(context, field_name, section_name, value):
+    page: Page = context.page
+    section = get_form_section_by_name(page, section_name)
+    wait_until_page_loaded(page)
+    assert section
+    field = section.get_by_text(value)
+    expect(field).to_have_text(value)
+    expect(field).to_have_id(field_name)

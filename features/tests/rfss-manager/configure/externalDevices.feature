@@ -1,9 +1,9 @@
 @WebUI @RFSS-Manager
 @configure @empty
 Feature: RFSS Manager - RFSS External Devices
-  Fills out the RFSS Manager External Devices page
+  Test the RFSS Manager External Devices page
 
-  Background: Opening the RFSS Manager
+  Background: Opening the RFSS Manager External Devices page
     Given I opened the 'RFSS Manager'
     And I logged in as User: 'taitnet', Password: 'tait'
     When I select 'External Devices' from 'Configure' on navbar
@@ -98,7 +98,7 @@ Feature: RFSS Manager - RFSS External Devices
     And I fill the 'text' field 'WACN ID' with 'a4399' under 'Identity'
     And I fill the 'text' field 'System ID' with '2cc' under 'Identity'
     And I fill the 'text' field 'RFSS ID' with '1' under 'Identity'
-    And I click on the check box 'External Device Use 4 Hex Digit Rfss Id' under 'Identity' section
+    And I 'check' on the check box 'Use 4 Hex Digit RFSS ID' under 'Identity' section
     And I fill the 'text' field 'IP Address' with '127.0.0.9' under 'Identity'
     And I choose 'None' option from the 'External Device Vocoder Mode Capability' dropdown under 'Identity' section
     And I press the button with 'Save' label
