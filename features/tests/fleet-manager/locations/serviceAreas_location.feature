@@ -95,5 +95,14 @@ Feature: Fleet Manager - Locations
         And I choose Yes on the dialog box
         Then deleting that Service Area is successful
 
+    Scenario Outline: Creating Service Area with Missing Name
+        When I clicked on FM Service Areas menu
+        And I press the Create button
+        And I fill-out the <scenario> form
+        And I press the Save button
+        Then the error message should contain <error_msg>
 
-
+        Examples:
+           | scenario                          |error_msg                                 |
+           | Service Area - Missing Area Name  | Missing required field(s): serviceArea   |
+           

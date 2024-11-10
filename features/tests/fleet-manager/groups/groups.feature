@@ -52,7 +52,7 @@ Feature: Fleet Manager - Groups
     Scenario Outline: Creating a Group with invalid values
         When I press the Create button
         And I fill the Group form with id:'<id>' and alias:'<alias>'
-        Then the error message contains '<error_msg>'
+        Then the error message should contain '<error_msg>'
 
         Examples:
            | id     | alias             | error_msg                                 |

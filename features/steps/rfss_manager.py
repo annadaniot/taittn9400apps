@@ -138,6 +138,8 @@ def check_field_whether_match_the_condition(context, condition, field_type, fiel
         field = section.get_by_label(field_name, exact=True)
     elif field_type == "number":
         field = section.get_by_role("row", name=field_name).get_by_role("spinbutton")
+    elif field_type == "checkbox":
+        field = section.get_by_role("row", name=field_name).get_by_role("checkbox")
     else:
         logger.error(f"Invalid field type '{field_type}'")
         assert False, f"Invalid {field_type=}"
@@ -210,7 +212,7 @@ def click_on_section_on_nav_bar(context, section_name):
     section.get_by_role("link", name=section_name).click()
 
 
-# TODO: this should get removed after CNP25-4268
+# TODO: this should get removed after CNP25-4268 and CNP25-4294
 @given("I can see the '{field_name}' is '{value}'")
 @then("I can see the '{field_name}' is '{value}'")
 def check_data_in_the_form_temp(context, field_name, value):
@@ -225,3 +227,37 @@ def check_data_in_the_form_temp(context, field_name, value):
             text = setting_item.locator(".value").inner_text()
     assert text, f"field {field_name} not found"
     assert text == value, f"expect {field_name} got {value}"
+
+
+# TODO: this should get removed after CNP25-4294
+@then("I can see the '{field_name}' list box have '{num_of_rows}' rows")
+def check_is_a_list_box_have_given_rows_temp(context, field_name, num_of_rows):
+    page: Page = context.page
+    wait_until_page_loaded(page)
+
+    setting_items = page.locator(".setting-item-array")
+    list_box = None
+    for i in range(0, setting_items.count()):
+        setting_item = setting_items.nth(i)
+        if setting_item.locator(".title-array").inner_text() == field_name:
+            list_box = setting_item.locator(".value-array")
+    assert list_box, f"list_box {field_name} not found"
+    number_of_row = list_box.locator(".groups-item").count()
+    assert number_of_row == int(num_of_rows), f"got {number_of_row} expect {num_of_rows}"
+
+
+@when("I press the button with '{button_name}' label for '{field_name}' under '{section_name}' section")
+def press_a_button_with_label_under_a_field(context, button_name, field_name, section_name):
+    page: Page = context.page
+    wait_until_page_loaded(page)
+    section = get_form_section_by_name(page, section_name)
+    assert section, f"{section_name=} not found"
+
+    fields = section.locator("tr")
+    button = None
+    for i in range(0, fields.count()):
+        field = fields.nth(i)
+        if field.locator("td").count() == 2 and field.locator("td").first.inner_text() == field_name:
+            button = field.get_by_role("button", name=button_name)
+    assert button, f"button {button_name} not found under {field_name}"
+    button.click()

@@ -399,7 +399,7 @@ def fill_field_with_value(context, field_type, field_name, value, section_name):
         field = section.get_by_role("row", name=field_name).get_by_role("spinbutton")
         field.fill("")
         field.type(value)  # use type to make sure UI show error message if necessary
-        field.press("Enter") # use Enter to make sure UI update
+        field.press("Enter")  # use Enter to make sure UI update
     else:
         logger.error(f"Invalid field type '{field_type}'")
         assert False, f"Invalid {field_type=}"

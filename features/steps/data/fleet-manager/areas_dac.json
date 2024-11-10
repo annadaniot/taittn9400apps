@@ -53,6 +53,84 @@
         "DAC Group Name": "Encrypted",
         "IP Pool": "Test-Pool",
         "Alias": "PD-Encrypted-Extended"
+    },
+
+    "Service Area - Missing Area Name": {
+        "Area Name": "",
+        "Agency": "Default",
+        "Description": "First Service Area"
+    },
+
+    "DAC Group Profile - Missing Name": {
+        "Name": "",
+        "DAC Group ID": "9",
+        "OTAR Transport Protocol": "UDP",
+        "OTAR Port Number": "64414",
+        "Encrypted": "No",
+        "Location Data Transport Protocol": "UDP",
+        "Location Data Port Number": "64420",
+        "OTAP Transport Protocol": "UDP",
+        "OTAP Port Number": "64422"
+    },
+
+    "DAC Group Profile - Missing DAC Group ID": {
+        "Name": "Encrypted",
+        "DAC Group ID": "",
+        "OTAR Transport Protocol": "UDP",
+        "OTAR Port Number": "64414",
+        "Encrypted": "No",
+        "Location Data Transport Protocol": "UDP",
+        "Location Data Port Number": "64420",
+        "OTAP Transport Protocol": "UDP",
+        "OTAP Port Number": "64422"
+    },
+
+    "DAC Group Profile - Missing OTAR Port Number": {
+        "Name": "Encrypted",
+        "DAC Group ID": "9",
+        "OTAR Transport Protocol": "UDP",
+        "OTAR Port Number": "",
+        "Encrypted": "No",
+        "Location Data Transport Protocol": "UDP",
+        "Location Data Port Number": "64420",
+        "OTAP Transport Protocol": "UDP",
+        "OTAP Port Number": "64422"
+    },
+
+    "DAC Group Profile - Missing Location Data Port Number": {
+        "Name": "Encrypted",
+        "DAC Group ID": "9",
+        "OTAR Transport Protocol": "UDP",
+        "OTAR Port Number": "64414",
+        "Encrypted": "No",
+        "Location Data Transport Protocol": "UDP",
+        "Location Data Port Number": "",
+        "OTAP Transport Protocol": "UDP",
+        "OTAP Port Number": "64422"
+    },
+
+    "DAC Group Profile - Missing OTAP Port Number": {
+        "Name": "Encrypted",
+        "DAC Group ID": "9",
+        "OTAR Transport Protocol": "UDP",
+        "OTAR Port Number": "64414",
+        "Encrypted": "No",
+        "Location Data Transport Protocol": "UDP",
+        "Location Data Port Number": "64420",
+        "OTAP Transport Protocol": "UDP",
+        "OTAP Port Number": ""
+    },
+
+    "DAC Group Profile - Duplicate DAC Group Profile Name": {
+        "Name": "Unencrypted",
+        "DAC Group ID": "9",
+        "OTAR Transport Protocol": "UDP",
+        "OTAR Port Number": "64414",
+        "Encrypted": "No",
+        "Location Data Transport Protocol": "UDP",
+        "Location Data Port Number": "64420",
+        "OTAP Transport Protocol": "UDP",
+        "OTAP Port Number": "64422"
     }
     
 }

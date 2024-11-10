@@ -53,7 +53,7 @@ Feature: Fleet Manager - Subscriber
     Scenario Outline: Creating a Subscriber with invalid values
         When I press the Create button
         And I fill the Subscriber form with id:'<id>' and alias:'<alias>'
-        Then the error message contains '<error_msg>'
+        Then the error message should contain '<error_msg>'
 
         Examples:
            | id     | alias            | error_msg                                 |

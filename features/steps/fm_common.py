@@ -11,7 +11,6 @@ def navigating_pages(context, submenu):
     """
     To open a page in the Fleet Manager app
     """
-
     menu_dict = {
         "Subscribers": 1,
         "Subscriber RFSS Map": 1,
@@ -35,7 +34,6 @@ def navigating_pages(context, submenu):
         "Subscribers Import": 9,
         "Groups Import": 9,
     }
-
     link_url_dict = {
         "Subscribers": "/p25fm/subscribers",
         "Subscriber RFSS Map": "/p25fm/subscribers/rfss",
@@ -59,10 +57,8 @@ def navigating_pages(context, submenu):
         "Subscribers Import": "/p25fm/import/subscribers",
         "Groups Import": "/p25fm/import/groups",
     }
-
     menu_num = menu_dict[submenu]
     url = link_url_dict[submenu]
-
     # 1. Expanding Menus
     # if Subscribers, then no need to click since submenus, Subscribers is displayed already
     if menu_num != 1:
@@ -75,7 +71,6 @@ def navigating_pages(context, submenu):
         )
         active_menu.click()
         sleep(2)
-
     # 2. Click the submenus
     link = context.page.locator(f'a[href="{url}"]')
     link.click()
@@ -84,7 +79,6 @@ def navigating_pages(context, submenu):
 
 def load_testcase_json(context, test_case):
     """"""
-
     file_mapping = {
         "Supergroup": "supergroup.json",
         "Subscriber": "subscribers.json",
@@ -93,7 +87,6 @@ def load_testcase_json(context, test_case):
         "Group": "groups.json",
         "Service": "areas_dac.json"
     }
-
     for key, file_name in file_mapping.items():
         if key in test_case:
             logger.info(f'{key}, {file_name}')
@@ -102,7 +95,6 @@ def load_testcase_json(context, test_case):
 
 
 def load_json_data(context, test_case):
-
     data = load_testcase_json(context, test_case)
     form_data = data[test_case]
     return form_data
@@ -112,18 +104,13 @@ def verify_data_exist(context, test_case):
     """"""
     if "Edit" in test_case:
         button_click(context, "Back")
-
     search_key = find_search_key(context, test_case)
     sleep(1)
-
     table = context.page.query_selector("table.p-datatable-table")
     sleep(1)
-
     rows = table.query_selector_all("tr")
     sleep(1)
-
     found = False
-
     for row in rows:
         cells = row.query_selector_all("td")
         for cell in cells:
@@ -138,10 +125,8 @@ def verify_data_exist(context, test_case):
 
 
 def find_search_key(context, test_case):
-
     if "Split" in context.scenario.name:
         return str(context.max_1stgroup)
-
     elif "Delet" in context.scenario.name:
         return context.value
 
@@ -154,10 +139,8 @@ def find_search_key(context, test_case):
             return "70006"
     elif "Member" in test_case:
         return context.member
-
     else:
         form_data = load_json_data(context, test_case)
-
         key_map = {
             "Import": "Start ID",
             "RFSS Map": "Maximum",
@@ -171,31 +154,25 @@ def find_search_key(context, test_case):
             "Service Area": "Area Name",
             "DAC Group Profile": "Name",
             "DAC Group Map": "Alias"
-
         }
-
         data_key = None
         for key in key_map:
             logger.info(f'{key}, {data_key}')
             if key in test_case:
                 data_key = key_map[key]
                 break
-
         if data_key:
             return form_data.get(data_key)
 
 
 def get_file_names(context):
-
     table = context.page.query_selector("table.p-datatable-table")
     rows = table.query_selector_all("tr")
     backup_files = []
-
     for row in rows:
         first_td = row.query_selector('td:first-child')
         if first_td:
             backup_files.append(first_td.text_content().strip())
-
     return backup_files
 
 
@@ -218,7 +195,6 @@ def toggle_checkbox(checkbox, should_check):
 
 def click_save_button(context):
     save_buttons = context.page.locator(".p-button-label:has-text('Save')")
-
     for i in range(save_buttons.count()):
         save_button = save_buttons.nth(i)
         try:
@@ -227,7 +203,6 @@ def click_save_button(context):
             break
         except TimeoutError:
             continue
-
     else:
         raise Exception(
             "No 'Save' button was clickable after trying all available options.")
@@ -236,7 +211,6 @@ def click_save_button(context):
 def click_and_select(context, icon_selector, list_selector, option_value):
     context.page.locator(icon_selector).wait_for(state="visible", timeout=1000)
     context.page.locator(icon_selector).click()
-
     context.page.locator(list_selector).wait_for(state="visible", timeout=2000)
     item = context.page.locator(f'li[aria-label="{option_value}"]')
     item.wait_for(state="visible", timeout=1000)

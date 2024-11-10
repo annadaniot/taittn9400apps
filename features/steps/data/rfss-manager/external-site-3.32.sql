@@ -275,7 +275,7 @@ CREATE TABLE `ChannelGroup` (
 
 LOCK TABLES `ChannelGroup` WRITE;
 /*!40000 ALTER TABLE `ChannelGroup` DISABLE KEYS */;
-INSERT INTO `ChannelGroup` (`Id`, `ChannelGroup`, `SiteController`, `RxFrequency`, `TxFrequency`, `FrequencyPlan`, `SelectionPriority`, `ControlChannelType`, `SuTxFreqCalcMethod`, `FrequencyPlanRx`, `TrafficChannelUsage`, `FdmaEnabled`, `TdmaEnabled`, `FrequencyPlanTdma`, `FrequencyPlanTdmaRx`) VALUES (1,'Default',1,450000000,459000000,'Default',0,'PRIMARY','IMPLICIT','Default',0,1,0,'Default','Default'),(2,'CCH',2,156175000,153175000,'FDMA',0,'PRIMARY','IMPLICIT','Default',2,1,1,'TDMA','Default'),(3,'TCH',2,156187500,153187500,'FDMA',0,'BACKUP','IMPLICIT','Default',2,1,1,'TDMA','Default');
+INSERT INTO `ChannelGroup` (`Id`, `ChannelGroup`, `SiteController`, `RxFrequency`, `TxFrequency`, `FrequencyPlan`, `SelectionPriority`, `ControlChannelType`, `SuTxFreqCalcMethod`, `FrequencyPlanRx`, `TrafficChannelUsage`, `FdmaEnabled`, `TdmaEnabled`, `FrequencyPlanTdma`, `FrequencyPlanTdmaRx`) VALUES (1,'Default',1,450000000,459000000,'Default',0,'PRIMARY','IMPLICIT','Default',0,1,0,'Default','Default');
 /*!40000 ALTER TABLE `ChannelGroup` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -478,7 +478,7 @@ CREATE TABLE `ExternalSite` (
   UNIQUE KEY `ExternalSiteName_ibfk_1` (`ExternalSite`),
   UNIQUE KEY `ExternalSiteIdKey` (`ExternalDevice`,`ExternalSiteId`),
   CONSTRAINT `ExternalRFSS_ibfk_2` FOREIGN KEY (`ExternalDevice`) REFERENCES `ExternalDevice` (`ExternalDevice`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -487,7 +487,7 @@ CREATE TABLE `ExternalSite` (
 
 LOCK TABLES `ExternalSite` WRITE;
 /*!40000 ALTER TABLE `ExternalSite` DISABLE KEYS */;
-INSERT INTO `ExternalSite` (`Id`, `ExternalSite`, `ExternalDevice`, `ExternalSiteId`, `ExternalSiteLra`, `ExternalFreqTx`, `ExternalFreqRx`, `ExternalServClass`) VALUES (1,'Default','Default',1,1,1,1,1);
+INSERT INTO `ExternalSite` (`Id`, `ExternalSite`, `ExternalDevice`, `ExternalSiteId`, `ExternalSiteLra`, `ExternalFreqTx`, `ExternalFreqRx`, `ExternalServClass`) VALUES (1,'Default','Default',1,1,1,1,1),(6,'External_Sites_1','Auckland',1,1,1,1,1),(7,'External_Sites_2','Wellington',2,1,1,1,1),(8,'External_Sites_3','Otago',3,1,1,1,1);
 /*!40000 ALTER TABLE `ExternalSite` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -800,7 +800,7 @@ CREATE TABLE `MobileIpHomeAgent` (
   UNIQUE KEY `MobileIpHomeAgent` (`MobileIpHomeAgent`),
   KEY `MobileIpHomeAgent_fk` (`ExternalDevice`),
   CONSTRAINT `MobileIpHomeAgent_fk` FOREIGN KEY (`ExternalDevice`) REFERENCES `ExternalDevice` (`ExternalDevice`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1242,7 +1242,7 @@ CREATE TABLE `SiteController` (
   CONSTRAINT `SiteController_ibfk_7` FOREIGN KEY (`RegistrationProfile`) REFERENCES `RegistrationProfile` (`RegistrationProfile`) ON UPDATE CASCADE,
   CONSTRAINT `SiteController_ibfk_8` FOREIGN KEY (`CallProfile`) REFERENCES `CallProfile` (`CallProfile`) ON UPDATE CASCADE,
   CONSTRAINT `SiteController_ibfk_9` FOREIGN KEY (`RFSSController`) REFERENCES `RFSSController` (`RFSSController`) ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1251,7 +1251,7 @@ CREATE TABLE `SiteController` (
 
 LOCK TABLES `SiteController` WRITE;
 /*!40000 ALTER TABLE `SiteController` DISABLE KEYS */;
-INSERT INTO `SiteController` (`Id`, `SiteController`, `SCIpAddress`, `SiteHostname`, `SiteId`, `RFSSController`, `TccpVoiceSSRC`, `TccpConnectionTimeoutMs`, `TccpHeartbeatPeriodMs`, `Lra`, `Nac`, `RfssRspTimeMs`, `RfssFinalRspTimeSecs`, `TccpLocalVoiceRepeat`, `QOSDSCPControl`, `QOSDSCPVoice`, `SendGroupChannelGrantUpdates`, `RegCmdSourceAddress`, `EventRecordsDirectory`, `VlrDirectory`, `AdjacentSite`, `ControlChannelProfile`, `TrafficChannelProfile`, `LogProfile`, `NifProfile`, `SipProfile`, `McProfile`, `RegistrationProfile`, `CallProfile`, `EventProfile`, `LocalProfile`, `SiteSystemInfoPort`, `Site_IsHA`, `SiteHAIP_A`, `SiteHAIP_B`, `SiteHAhost_A`, `SiteHAhost_B`, `SiteDRBD_A`, `SiteDRBD_B`, `SiteDRBDNetmask`, `SiteDRBDBandwidth`, `SiteNetCheckIP`, `SndcpOutboundMsgQTime`, `SndcpReadyTime`, `MaxSusPerDataChannel`, `SiteLicenseExpiry_A`, `SiteLicenseExpiry_B`, `LicensePHASE1_A`, `LicensePHASE1_B`, `LicensePHASE2_A`, `LicensePHASE2_B`, `SiteLicenseHA_A`, `SiteLicenseHA_B`, `SiteIsColocatedWithRfss`, `SiteDapiEnabled`, `SiteDapiIpAddress`, `SiteDapiPort`, `SiteControllerVocoderModeCapability`, `SiteSshPort`, `QosChannelPartitionReservedChannels`) VALUES (1,'Default','127.0.0.1','',0,'Default',1,30000,5000,0,659,500,6,1,26,46,1,'NoUnit','/home/taitnet/p25sc/event','/home/taitnet/p25sc/vlr','','Default','Default','Default','Default','Default','Default','Default','Default','Default','Default',3333,0,'127.0.0.1','127.0.0.1','localhost','localhost','127.0.0.1','127.0.0.1','255.255.255.0',1000,'127.0.0.1',15,6,32,'','',1,1,0,0,0,0,0,0,'127.0.0.1',3000,3,22,0),(2,'SiteD','10.214.191.203','SiteD',13,'RFSS_Ubu',1,30000,5000,0,659,500,6,1,26,46,1,'NoUnit','/home/taitnet/p25sc/event','/home/taitnet/p25sc/vlr','','Default','Default','Default','Default','Default','Default','Default','Default','Default','Default',3333,0,'0.0.0.0','0.0.0.0',NULL,NULL,'0.0.0.0','0.0.0.0','0.0.0.0',1000,'0.0.0.0',15,6,32,NULL,NULL,1,1,0,0,0,0,0,0,'127.0.0.1',3000,3,2222,0),(4,'SiteA','192.168.56.10','SiteA',1,'RFSS_Ubu',1,30000,5000,0,659,500,6,1,26,46,1,'NoUnit','/home/taitnet/p25sc/event','/home/taitnet/p25sc/vlr','','Default','Default','Default','Default','Default','Default','Default','Default','Default','Default',3333,0,'0.0.0.0','0.0.0.0',NULL,NULL,'0.0.0.0','0.0.0.0','0.0.0.0',1000,'0.0.0.0',15,6,32,NULL,NULL,1,1,0,0,0,0,0,0,'127.0.0.1',3000,3,22,0),(5,'SiteB','192.168.56.11','SiteB',2,'RFSS_Ubu',1,30000,5000,0,659,500,6,1,26,46,1,'NoUnit','/home/taitnet/p25sc/event','/home/taitnet/p25sc/vlr','','Default','Default','Default','Default','Default','Default','Default','Default','Default','Default',3333,0,'0.0.0.0','0.0.0.0',NULL,NULL,'0.0.0.0','0.0.0.0','0.0.0.0',1000,'0.0.0.0',15,6,32,NULL,NULL,1,1,0,0,0,0,0,0,'127.0.0.1',3000,3,22,0),(6,'SiteC','192.168.56.12','SiteC',3,'RFSS_Ubu',1,30000,5000,0,659,500,6,1,26,46,1,'NoUnit','/home/taitnet/p25sc/event','/home/taitnet/p25sc/vlr','','Default','Default','Default','Default','Default','Default','Default','Default','Default','Default',3333,0,'127.0.0.1','127.0.0.1','localhost','localhost','127.0.0.1','127.0.0.1','255.255.255.0',1000,'127.0.0.1',15,6,32,'','',1,1,0,0,0,0,0,0,'127.0.0.1',3000,3,22,0);
+INSERT INTO `SiteController` (`Id`, `SiteController`, `SCIpAddress`, `SiteHostname`, `SiteId`, `RFSSController`, `TccpVoiceSSRC`, `TccpConnectionTimeoutMs`, `TccpHeartbeatPeriodMs`, `Lra`, `Nac`, `RfssRspTimeMs`, `RfssFinalRspTimeSecs`, `TccpLocalVoiceRepeat`, `QOSDSCPControl`, `QOSDSCPVoice`, `SendGroupChannelGrantUpdates`, `RegCmdSourceAddress`, `EventRecordsDirectory`, `VlrDirectory`, `AdjacentSite`, `ControlChannelProfile`, `TrafficChannelProfile`, `LogProfile`, `NifProfile`, `SipProfile`, `McProfile`, `RegistrationProfile`, `CallProfile`, `EventProfile`, `LocalProfile`, `SiteSystemInfoPort`, `Site_IsHA`, `SiteHAIP_A`, `SiteHAIP_B`, `SiteHAhost_A`, `SiteHAhost_B`, `SiteDRBD_A`, `SiteDRBD_B`, `SiteDRBDNetmask`, `SiteDRBDBandwidth`, `SiteNetCheckIP`, `SndcpOutboundMsgQTime`, `SndcpReadyTime`, `MaxSusPerDataChannel`, `SiteLicenseExpiry_A`, `SiteLicenseExpiry_B`, `LicensePHASE1_A`, `LicensePHASE1_B`, `LicensePHASE2_A`, `LicensePHASE2_B`, `SiteLicenseHA_A`, `SiteLicenseHA_B`, `SiteIsColocatedWithRfss`, `SiteDapiEnabled`, `SiteDapiIpAddress`, `SiteDapiPort`, `SiteControllerVocoderModeCapability`, `SiteSshPort`, `QosChannelPartitionReservedChannels`) VALUES (1,'Default','127.0.0.1','',0,'Default',1,30000,5000,0,659,500,6,1,26,46,1,'NoUnit','/home/taitnet/p25sc/event','/home/taitnet/p25sc/vlr','','Default','Default','Default','Default','Default','Default','Default','Default','Default','Default',3333,0,'127.0.0.1','127.0.0.1','localhost','localhost','127.0.0.1','127.0.0.1','255.255.255.0',1000,'127.0.0.1',15,6,32,'','',1,1,0,0,0,0,0,0,'127.0.0.1',3000,3,22,0);
 /*!40000 ALTER TABLE `SiteController` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1392,7 +1392,7 @@ CREATE TABLE `Transceiver` (
 
 LOCK TABLES `Transceiver` WRITE;
 /*!40000 ALTER TABLE `Transceiver` DISABLE KEYS */;
-INSERT INTO `Transceiver` (`Id`, `Transceiver`, `ChannelGroup`, `TransceiverType`, `TccpIpAddress`, `TccpPort`, `TccpRole`, `TccpVoicePort`, `TccpConnection`) VALUES (1,'Default',1,'TB9100','127.0.0.1',50000,'PRIMARY',50002,1),(2,'SiteD-CCH-TRX',2,'TB9100','10.214.191.204',50000,'PRIMARY',50002,1),(3,'SiteE-TCH-TRX',3,'TB9100','10.214.191.205',50000,'PRIMARY',50002,1);
+INSERT INTO `Transceiver` (`Id`, `Transceiver`, `ChannelGroup`, `TransceiverType`, `TccpIpAddress`, `TccpPort`, `TccpRole`, `TccpVoicePort`, `TccpConnection`) VALUES (1,'Default',1,'TB9100','127.0.0.1',50000,'PRIMARY',50002,1);
 /*!40000 ALTER TABLE `Transceiver` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1472,7 +1472,7 @@ CREATE TABLE `ip_data_pool` (
   `agt_name` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`Id`),
   UNIQUE KEY `ip_data_pool` (`ip_data_pool`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1481,7 +1481,6 @@ CREATE TABLE `ip_data_pool` (
 
 LOCK TABLES `ip_data_pool` WRITE;
 /*!40000 ALTER TABLE `ip_data_pool` DISABLE KEYS */;
-INSERT INTO `ip_data_pool` (`Id`, `ip_data_pool`, `ip_address_start`, `pool_type`, `agt_name`) VALUES (1,'Test-Pool','10.214.191.224/27','0',NULL);
 /*!40000 ALTER TABLE `ip_data_pool` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1629,4 +1628,4 @@ SET character_set_client = @saved_cs_client;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-10-14  3:43:22
+-- Dump completed on 2024-11-05  1:55:29

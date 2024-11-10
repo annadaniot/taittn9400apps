@@ -88,7 +88,7 @@ Feature: Fleet Manager - Supergroup
         And I press the Create button
         And I complete the form with a <scenario> scenario
         And I press the Save button
-        Then the error message contains <error_msg>
+        Then the error message should contain <error_msg>
     
         Examples:
            | scenario                                       | error_msg                         |

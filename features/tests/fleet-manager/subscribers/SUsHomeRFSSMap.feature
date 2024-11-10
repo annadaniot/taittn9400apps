@@ -37,7 +37,7 @@ Feature: Fleet Manager - Subscribers Home RFSS Map
         When I press the Create button
         And I fill in the form with a <scenario> Scenario
         And I press the Save button
-        Then the error message contains <error_msg>
+        Then the error message should contain <error_msg>
 
         Examples:
            | scenario                                    | error_msg                      |    

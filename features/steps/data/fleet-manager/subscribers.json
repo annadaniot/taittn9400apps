@@ -25,7 +25,6 @@
         "Priority": "5",
         "Group Call Permission": "Emergency only",
         "Unit Call Permission": "Receive only",
-        "PSTN Call Permission": "All",
         "Allow Data Calls": "No",
         "Information": "SU for CI tests",
         "Affiliate Anywhere": "Yes"
@@ -38,7 +37,6 @@
         "Priority": "7",
         "Group Call Permission": "All",
         "Unit Call Permission": "Initiate only",
-        "PSTN Call Permission": "All",
         "Allow Data Calls": "No",
         "Information": "SU for CI tests"
     }, 
@@ -52,7 +50,6 @@
         "Priority": "5",
         "Group Call Permission": "All",
         "Unit Call Permission": "All",
-        "PSTN Call Permission": "All",
         "Allow Data Calls": "No",
         "Information": "SU for CI tests",
         "Affiliate Anywhere": "Yes"
